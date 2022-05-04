@@ -88,7 +88,8 @@ class _HomePageState extends State<HomePage> {
   void newRound() {
     ShootRound newRound = ShootRound()
       ..dateTime = DateTime.now()
-      ..shootCount = 0;
+      ..shootCount = 0
+      ..hitCount = 0;
     shootRounds.add(newRound);
     shootHistory?.relatedRound.add(newRound);
     shootHistory?.totalRound += 1;
@@ -115,6 +116,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> updateRound(ShootRecord newRecord) async {
     ShootRound currRound = shootRounds.last;
+    if (newRecord.hitTarget) currRound.hitCount += 1;
     currRound.shootCount += 1;
     currRound.relatedRecord.add(newRecord);
     await _databaseController.addShootRound(currRound);
@@ -390,8 +392,15 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               children: [
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text('Round ' + (index + 1).toString()),
+                                    Text('Hit Rate ' +
+                                        (shootRounds[index].shootCount > 0
+                                            ? ((shootRounds[index].hitCount / shootRounds[index].shootCount * 100)
+                                                    .toStringAsFixed(0) +
+                                                '%')
+                                            : '---'))
                                   ],
                                 ),
                                 const SizedBox(height: 4),

@@ -15,9 +15,9 @@ extension GetShootRoundCollection on Isar {
 const ShootRoundSchema = CollectionSchema(
   name: 'ShootRound',
   schema:
-      '{"name":"ShootRound","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[{"name":"dateTime","unique":false,"properties":[{"name":"dateTime","type":"Value","caseSensitive":false}]}],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
+      '{"name":"ShootRound","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"hitCount","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[{"name":"dateTime","unique":false,"properties":[{"name":"dateTime","type":"Value","caseSensitive":false}]}],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
   idName: 'id',
-  propertyIds: {'dateTime': 0, 'shootCount': 1},
+  propertyIds: {'dateTime': 0, 'hitCount': 1, 'shootCount': 2},
   listProperties: {},
   indexIds: {'dateTime': 0},
   indexValueTypes: {
@@ -66,8 +66,10 @@ void _shootRoundSerializeNative(
   var dynamicSize = 0;
   final value0 = object.dateTime;
   final _dateTime = value0;
-  final value1 = object.shootCount;
-  final _shootCount = value1;
+  final value1 = object.hitCount;
+  final _hitCount = value1;
+  final value2 = object.shootCount;
+  final _shootCount = value2;
   final size = staticSize + dynamicSize;
 
   rawObj.buffer = alloc(size);
@@ -75,15 +77,17 @@ void _shootRoundSerializeNative(
   final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
   final writer = IsarBinaryWriter(buffer, staticSize);
   writer.writeDateTime(offsets[0], _dateTime);
-  writer.writeLong(offsets[1], _shootCount);
+  writer.writeLong(offsets[1], _hitCount);
+  writer.writeLong(offsets[2], _shootCount);
 }
 
 ShootRound _shootRoundDeserializeNative(IsarCollection<ShootRound> collection,
     int id, IsarBinaryReader reader, List<int> offsets) {
   final object = ShootRound();
   object.dateTime = reader.readDateTime(offsets[0]);
+  object.hitCount = reader.readLong(offsets[1]);
   object.id = id;
-  object.shootCount = reader.readLong(offsets[1]);
+  object.shootCount = reader.readLong(offsets[2]);
   _shootRoundAttachLinks(collection, id, object);
   return object;
 }
@@ -97,6 +101,8 @@ P _shootRoundDeserializePropNative<P>(
       return (reader.readDateTime(offset)) as P;
     case 1:
       return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readLong(offset)) as P;
     default:
       throw 'Illegal propertyIndex';
   }
@@ -107,6 +113,7 @@ dynamic _shootRoundSerializeWeb(
   final jsObj = IsarNative.newJsObject();
   IsarNative.jsObjectSet(
       jsObj, 'dateTime', object.dateTime.toUtc().millisecondsSinceEpoch);
+  IsarNative.jsObjectSet(jsObj, 'hitCount', object.hitCount);
   IsarNative.jsObjectSet(jsObj, 'id', object.id);
   IsarNative.jsObjectSet(jsObj, 'shootCount', object.shootCount);
   return jsObj;
@@ -121,6 +128,8 @@ ShootRound _shootRoundDeserializeWeb(
               isUtc: true)
           .toLocal()
       : DateTime.fromMillisecondsSinceEpoch(0);
+  object.hitCount =
+      IsarNative.jsObjectGet(jsObj, 'hitCount') ?? double.negativeInfinity;
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
   object.shootCount =
       IsarNative.jsObjectGet(jsObj, 'shootCount') ?? double.negativeInfinity;
@@ -138,6 +147,9 @@ P _shootRoundDeserializePropWeb<P>(Object jsObj, String propertyName) {
                   isUtc: true)
               .toLocal()
           : DateTime.fromMillisecondsSinceEpoch(0)) as P;
+    case 'hitCount':
+      return (IsarNative.jsObjectGet(jsObj, 'hitCount') ??
+          double.negativeInfinity) as P;
     case 'id':
       return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
           as P;
@@ -342,6 +354,55 @@ extension ShootRoundQueryFilter
     ));
   }
 
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> hitCountEqualTo(
+      int value) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.eq,
+      property: 'hitCount',
+      value: value,
+    ));
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      hitCountGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.gt,
+      include: include,
+      property: 'hitCount',
+      value: value,
+    ));
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> hitCountLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.lt,
+      include: include,
+      property: 'hitCount',
+      value: value,
+    ));
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> hitCountBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition.between(
+      property: 'hitCount',
+      lower: lower,
+      includeLower: includeLower,
+      upper: upper,
+      includeUpper: includeUpper,
+    ));
+  }
+
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> idEqualTo(
       int value) {
     return addFilterConditionInternal(FilterCondition(
@@ -463,6 +524,14 @@ extension ShootRoundQueryWhereSortBy
     return addSortByInternal('dateTime', Sort.desc);
   }
 
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByHitCount() {
+    return addSortByInternal('hitCount', Sort.asc);
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByHitCountDesc() {
+    return addSortByInternal('hitCount', Sort.desc);
+  }
+
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortById() {
     return addSortByInternal('id', Sort.asc);
   }
@@ -490,6 +559,14 @@ extension ShootRoundQueryWhereSortThenBy
     return addSortByInternal('dateTime', Sort.desc);
   }
 
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByHitCount() {
+    return addSortByInternal('hitCount', Sort.asc);
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByHitCountDesc() {
+    return addSortByInternal('hitCount', Sort.desc);
+  }
+
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenById() {
     return addSortByInternal('id', Sort.asc);
   }
@@ -513,6 +590,10 @@ extension ShootRoundQueryWhereDistinct
     return addDistinctByInternal('dateTime');
   }
 
+  QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByHitCount() {
+    return addDistinctByInternal('hitCount');
+  }
+
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctById() {
     return addDistinctByInternal('id');
   }
@@ -526,6 +607,10 @@ extension ShootRoundQueryProperty
     on QueryBuilder<ShootRound, ShootRound, QQueryProperty> {
   QueryBuilder<ShootRound, DateTime, QQueryOperations> dateTimeProperty() {
     return addPropertyNameInternal('dateTime');
+  }
+
+  QueryBuilder<ShootRound, int, QQueryOperations> hitCountProperty() {
+    return addPropertyNameInternal('hitCount');
   }
 
   QueryBuilder<ShootRound, int, QQueryOperations> idProperty() {

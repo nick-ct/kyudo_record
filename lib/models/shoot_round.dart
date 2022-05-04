@@ -10,5 +10,6 @@ class ShootRound {
   @Index()
   late DateTime dateTime;
   late int shootCount;
+  late int hitCount;
   IsarLinks<ShootRecord> relatedRecord = IsarLinks<ShootRecord>();
 }
