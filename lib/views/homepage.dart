@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   int heatmapWidth = 350;
 
-  DateTime currDate = DateTime.now();
+  Rx<DateTime> currDate = DateTime.now().obs;
   ShootHistory? shootHistory;
   RxList<ShootRound> shootRounds = <ShootRound>[].obs;
   RxList<ShootRecord> displayRecords = <ShootRecord>[].obs;
@@ -46,9 +46,13 @@ class _HomePageState extends State<HomePage> {
     loadHistory();
   }
 
+  bool testHitTarget(double? x, double? y) => sqrt(pow(x ?? 0.0, 2) + pow(y ?? 0.0, 2)) < (radius / deductPosition);
+
+  void resetCurrShoot() => currShoot.value = null;
+
   Future<void> loadHistory() async {
     shootHistory = await _databaseController.getShootHistoryByDate(
-        '${currDate.year.toString()}-${currDate.month.toString().padLeft(2, '0')}-${currDate.day.toString().padLeft(2, '0')}');
+        '${currDate.value.year.toString()}-${currDate.value.month.toString().padLeft(2, '0')}-${currDate.value.day.toString().padLeft(2, '0')}');
 
     if (shootHistory != null) {
       await shootHistory?.relatedRound.load();
@@ -73,17 +77,13 @@ class _HomePageState extends State<HomePage> {
     } else {
       shootHistory = ShootHistory()
         ..date =
-            '${currDate.year.toString()}-${currDate.month.toString().padLeft(2, '0')}-${currDate.day.toString().padLeft(2, '0')}'
+            '${currDate.value.year.toString()}-${currDate.value.month.toString().padLeft(2, '0')}-${currDate.value.day.toString().padLeft(2, '0')}'
         ..totalRound = 0
         ..totalShoot = 0
         ..totalHitTarget = 0;
       newRound();
     }
   }
-
-  bool testHitTarget(double? x, double? y) => sqrt(pow(x ?? 0.0, 2) + pow(y ?? 0.0, 2)) < (radius / deductPosition);
-
-  void resetCurrShoot() => currShoot.value = null;
 
   void newRound() {
     ShootRound newRound = ShootRound()
@@ -146,19 +146,52 @@ class _HomePageState extends State<HomePage> {
     heatmapBytes = await HeatMap.process(heatMapPage);
   }
 
+  Future<void> previousDate() async {
+    shootHistory = null;
+    shootRounds.clear();
+    displayRecords.clear();
+    resetCurrShoot();
+    heatmapBytes = null;
+    showHitPoint.value = true;
+    showHeatmap.value = false;
+
+    currDate.value = currDate.value.subtract(const Duration(days: 1));
+    await loadHistory();
+  }
+
+  Future<void> nextDate() async {
+    shootHistory = null;
+    shootRounds.clear();
+    displayRecords.clear();
+    resetCurrShoot();
+    heatmapBytes = null;
+    showHitPoint.value = true;
+    showHeatmap.value = false;
+
+    currDate.value = currDate.value.add(const Duration(days: 1));
+    await loadHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-            '${currDate.year.toString()}-${currDate.month.toString().padLeft(2, '0')}-${currDate.day.toString().padLeft(2, '0')}'),
-        actions: [
-          IconButton(
-            onPressed: () => _databaseController.cleanDatabase(),
-            icon: const Icon(Icons.remove),
-          ),
-        ],
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(onPressed: () async => await previousDate(), icon: const Icon(Icons.arrow_back)),
+            Obx(() => Text(
+                '${currDate.value.year.toString()}-${currDate.value.month.toString().padLeft(2, '0')}-${currDate.value.day.toString().padLeft(2, '0')}')),
+            IconButton(onPressed: () async => await nextDate(), icon: const Icon(Icons.arrow_forward)),
+          ],
+        ),
+        // actions: [
+        //   IconButton(
+        //     onPressed: () => _databaseController.cleanDatabase(),
+        //     icon: const Icon(Icons.remove),
+        //   ),
+        // ],
       ),
       body: Column(
         children: [
