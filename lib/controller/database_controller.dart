@@ -25,7 +25,6 @@ class DatabaseController extends GetxController {
   }
 
   Future<int?> addShootRound(ShootRound newRound) async {
-    print('save round');
     int? recId;
     await isar.writeTxn((isar) async {
       recId = await isar.shootRounds.put(

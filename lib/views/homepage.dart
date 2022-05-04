@@ -67,6 +67,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> missed() async {
     ShootRecord shootRecord = ShootRecord()
       ..missed = true
+      ..dateTime = DateTime.now()
+      ..hitPositionX = 0
+      ..hitPositionY = 0
       ..hitTarget = false;
 
     await _databaseController.addShootRecord(shootRecord);
@@ -78,6 +81,8 @@ class _HomePageState extends State<HomePage> {
     currRound.shootCount += 1;
     currRound.relatedRecord.add(newRecord);
     await _databaseController.addShootRound(currRound);
+
+    setState(() {});
 
     if (currRound.shootCount == 4) {
       newRound();
@@ -273,8 +278,14 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const Spacer(),
                 ElevatedButton.icon(
-                  onPressed: () => newPoint.value = null,
+                  onPressed: () => missed(),
                   icon: const Icon(Icons.remove),
+                  label: const Text('Miss'),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () => newPoint.value = null,
+                  icon: const Icon(Icons.delete),
                   label: const Text('Clear'),
                 ),
                 const SizedBox(width: 8),
@@ -318,30 +329,75 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const Divider(),
-
-          // TextButton(
-          //   onPressed: () async => await createHeatMap(),
-          //   child: const Text('create heatmap'),
-          // ),
-
-          TextButton(
-            onPressed: () => testDB(),
-            child: const Text('test db'),
-          ),
-
-          // SingleChildScrollView(child: ListView.separated(itemBuilder: itemBuilder, separatorBuilder: separatorBuilder, itemCount: itemCount),),
-
-          Obx(
-            () => Wrap(
-              children: points.map((element) {
-                bool hitTarget = testHitTarget(element.dx, element.dy);
-                return Icon(
-                  hitTarget ? Icons.circle_outlined : Icons.close,
-                  color: hitTarget ? Colors.blue : Colors.red,
-                );
-              }).toList(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Obx(
+                  () => ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: rounds.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      List<ShootRecord> relatedRecords = rounds[index].relatedRecord.toList();
+                      relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
+                      return Card(
+                        child: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Round ' + rounds[index].round.toString()),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    for (int i = 0; i < 4; i++)
+                                      i < relatedRecords.length
+                                          ? Container(
+                                              width: 30,
+                                              height: 30,
+                                              child: Center(
+                                                  child: relatedRecords[i].missed
+                                                      ? const Icon(Icons.remove)
+                                                      : relatedRecords[i].hitTarget
+                                                          ? const Icon(Icons.check)
+                                                          : const Icon(Icons.close)))
+                                          : Container(
+                                              width: 30,
+                                              height: 30,
+                                              child: const Icon(Icons.add),
+                                            )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ),
+
+          // Obx(
+          //   () => Wrap(
+          //     children: points.map((element) {
+          //       bool hitTarget = testHitTarget(element.dx, element.dy);
+          //       return Icon(
+          //         hitTarget ? Icons.circle_outlined : Icons.close,
+          //         color: hitTarget ? Colors.blue : Colors.red,
+          //       );
+          //     }).toList(),
+          //   ),
+          // ),
         ],
       ),
     );
