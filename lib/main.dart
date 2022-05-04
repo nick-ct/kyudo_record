@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kyudo_record/controller/database_controller.dart';
 import 'package:kyudo_record/views/homepage.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DatabaseController _databaseController = Get.put(DatabaseController(), permanent: true);
+  await _databaseController.init();
   runApp(const App());
 }
 
@@ -13,7 +17,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'Kyudo Record',
       theme: ThemeData(
           fontFamily: 'NotoSansHK',
           primaryColor: Colors.blue,

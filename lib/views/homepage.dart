@@ -2,9 +2,16 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:flutter_heat_map/flutter_heat_map.dart';
+import 'package:isar/isar.dart';
+import 'package:kyudo_record/controller/database_controller.dart';
+import 'package:kyudo_record/models/shoot_record.dart';
+import 'package:kyudo_record/models/shoot_round.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,12 +21,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final DatabaseController _databaseController = Get.find();
   late double paintArea;
   late double deductPosition;
   late double radius;
   late double diameter;
   int heatmapWidth = 350;
 
+  RxList<ShootRound> rounds = <ShootRound>[].obs;
   RxList<Offset> points = <Offset>[].obs;
   Rxn<Offset> newPoint = Rxn<Offset>();
   Uint8List? bytes;
@@ -33,21 +42,56 @@ class _HomePageState extends State<HomePage> {
     deductPosition = paintArea / 2;
     diameter = Get.width * 0.65 > 325 ? 325 : Get.width * 0.65;
     radius = diameter / 2;
+    newRound();
   }
 
   bool testHitTarget(double? x, double? y) => sqrt(pow(x ?? 0.0, 2) + pow(y ?? 0.0, 2)) < (radius / deductPosition);
 
-  void savePoint() {
+  Future<void> savePoint() async {
     if (newPoint.value != null) {
+      ShootRecord shootRecord = ShootRecord()
+        ..missed = false
+        ..dateTime = DateTime.now()
+        ..hitPositionX = newPoint.value!.dx
+        ..hitPositionY = newPoint.value!.dy
+        ..hitTarget = testHitTarget(newPoint.value?.dx, newPoint.value?.dy);
+      await _databaseController.addShootRecord(shootRecord);
+      await addToRound(shootRecord);
+
       points.add(newPoint.value!);
+      await createHeatMap();
       newPoint.value = null;
     }
   }
 
-  Future<void> createHeatMap() async {
-    if (points.isEmpty) return;
-    showHeatmap.value = false;
+  Future<void> missed() async {
+    ShootRecord shootRecord = ShootRecord()
+      ..missed = true
+      ..hitTarget = false;
 
+    await _databaseController.addShootRecord(shootRecord);
+    await addToRound(shootRecord);
+  }
+
+  Future<void> addToRound(ShootRecord newRecord) async {
+    ShootRound currRound = rounds.last;
+    currRound.shootCount += 1;
+    currRound.relatedRecord.add(newRecord);
+    await _databaseController.addShootRound(currRound);
+
+    if (currRound.shootCount == 4) {
+      newRound();
+    }
+  }
+
+  void newRound() {
+    ShootRound newRound = ShootRound()
+      ..round = rounds.length + 1
+      ..shootCount = 0;
+    rounds.add(newRound);
+  }
+
+  Future<void> createHeatMap() async {
     ImageProvider? provider =
         AssetImage('assets/images/transparent' + heatmapWidth.toString() + 'x' + heatmapWidth.toString() + '.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
@@ -63,8 +107,24 @@ class _HomePageState extends State<HomePage> {
           .toList(),
     );
     bytes = await HeatMap.process(heatMapPage);
+  }
 
-    showHeatmap.value = true;
+  Future<void> testDB() async {
+    print(_databaseController.isar.shootRecords.countSync());
+    print(_databaseController.isar.shootRecords.filter().hitTargetEqualTo(true).countSync());
+
+    print(_databaseController.isar.shootRounds.countSync());
+    var data = _databaseController.isar.shootRounds.getSync(1);
+    data?.relatedRecord.loadSync();
+
+    data?.relatedRecord.forEach((e) {
+      print(e.dateTime.toString());
+    });
+  }
+
+  Future<void> clearDB() async {
+    _databaseController.isar.shootRecords.clearSync();
+    // print(_databaseController.isar);
   }
 
   @override
@@ -202,35 +262,86 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () => savePoint(),
-            child: const Text('save new point'),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                const FaIcon(
+                  FontAwesomeIcons.bullseye,
+                  size: 40,
+                ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () => newPoint.value = null,
+                  icon: const Icon(Icons.remove),
+                  label: const Text('Clear'),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () => savePoint(),
+                  icon: const Icon(Icons.done),
+                  label: const Text('Save'),
+                ),
+              ],
+            ),
           ),
-          TextButton(
-            onPressed: () => newPoint.value = null,
-            child: const Text('clear new point'),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                const Text('Hit Record'),
+                const Spacer(),
+                Obx(
+                  () => CupertinoSwitch(
+                    value: showHitPoint.value,
+                    onChanged: (value) => showHitPoint.value = value,
+                  ),
+                ),
+              ],
+            ),
           ),
-          TextButton(
-            onPressed: () async => await createHeatMap(),
-            child: const Text('create heatmap'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                const Text('Heatmap'),
+                const Spacer(),
+                Obx(
+                  () => CupertinoSwitch(
+                    value: showHeatmap.value,
+                    onChanged: (value) => showHeatmap.value = (bytes == null ? false : value),
+                  ),
+                ),
+              ],
+            ),
           ),
+          const Divider(),
+
+          // TextButton(
+          //   onPressed: () async => await createHeatMap(),
+          //   child: const Text('create heatmap'),
+          // ),
+
           TextButton(
-            onPressed: () => showHitPoint.value = !showHitPoint.value,
-            child: const Text('switch hit point'),
+            onPressed: () => testDB(),
+            child: const Text('test db'),
           ),
-          TextButton(
-            onPressed: () => showHeatmap.value = !showHeatmap.value,
-            child: const Text('switch heatmap point'),
+
+          // SingleChildScrollView(child: ListView.separated(itemBuilder: itemBuilder, separatorBuilder: separatorBuilder, itemCount: itemCount),),
+
+          Obx(
+            () => Wrap(
+              children: points.map((element) {
+                bool hitTarget = testHitTarget(element.dx, element.dy);
+                return Icon(
+                  hitTarget ? Icons.circle_outlined : Icons.close,
+                  color: hitTarget ? Colors.blue : Colors.red,
+                );
+              }).toList(),
+            ),
           ),
-          Obx(() => Wrap(
-                children: points.map((element) {
-                  bool hitTarget = testHitTarget(element.dx, element.dy);
-                  return Icon(
-                    hitTarget ? Icons.circle_outlined : Icons.close,
-                    color: hitTarget ? Colors.blue : Colors.red,
-                  );
-                }).toList(),
-              )),
         ],
       ),
     );
