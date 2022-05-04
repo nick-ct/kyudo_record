@@ -8,9 +8,7 @@ class ShootRound {
   @Id()
   int id = Isar.autoIncrement;
   @Index()
-  final String date =
-      '${DateTime.now().year.toString()}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}';
-  late int round;
+  late DateTime dateTime;
   late int shootCount;
   IsarLinks<ShootRecord> relatedRecord = IsarLinks<ShootRecord>();
 }

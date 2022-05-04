@@ -15,14 +15,14 @@ extension GetShootRoundCollection on Isar {
 const ShootRoundSchema = CollectionSchema(
   name: 'ShootRound',
   schema:
-      '{"name":"ShootRound","idName":"id","properties":[{"name":"date","type":"String"},{"name":"round","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[{"name":"date","unique":false,"properties":[{"name":"date","type":"Hash","caseSensitive":true}]}],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
+      '{"name":"ShootRound","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[{"name":"dateTime","unique":false,"properties":[{"name":"dateTime","type":"Value","caseSensitive":false}]}],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
   idName: 'id',
-  propertyIds: {'date': 0, 'round': 1, 'shootCount': 2},
+  propertyIds: {'dateTime': 0, 'shootCount': 1},
   listProperties: {},
-  indexIds: {'date': 0},
+  indexIds: {'dateTime': 0},
   indexValueTypes: {
-    'date': [
-      IndexValueType.stringHash,
+    'dateTime': [
+      IndexValueType.long,
     ]
   },
   linkIds: {'relatedRecord': 0},
@@ -64,30 +64,26 @@ void _shootRoundSerializeNative(
     List<int> offsets,
     AdapterAlloc alloc) {
   var dynamicSize = 0;
-  final value0 = object.date;
-  final _date = IsarBinaryWriter.utf8Encoder.convert(value0);
-  dynamicSize += (_date.length) as int;
-  final value1 = object.round;
-  final _round = value1;
-  final value2 = object.shootCount;
-  final _shootCount = value2;
+  final value0 = object.dateTime;
+  final _dateTime = value0;
+  final value1 = object.shootCount;
+  final _shootCount = value1;
   final size = staticSize + dynamicSize;
 
   rawObj.buffer = alloc(size);
   rawObj.buffer_length = size;
   final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
   final writer = IsarBinaryWriter(buffer, staticSize);
-  writer.writeBytes(offsets[0], _date);
-  writer.writeLong(offsets[1], _round);
-  writer.writeLong(offsets[2], _shootCount);
+  writer.writeDateTime(offsets[0], _dateTime);
+  writer.writeLong(offsets[1], _shootCount);
 }
 
 ShootRound _shootRoundDeserializeNative(IsarCollection<ShootRound> collection,
     int id, IsarBinaryReader reader, List<int> offsets) {
   final object = ShootRound();
+  object.dateTime = reader.readDateTime(offsets[0]);
   object.id = id;
-  object.round = reader.readLong(offsets[1]);
-  object.shootCount = reader.readLong(offsets[2]);
+  object.shootCount = reader.readLong(offsets[1]);
   _shootRoundAttachLinks(collection, id, object);
   return object;
 }
@@ -98,10 +94,8 @@ P _shootRoundDeserializePropNative<P>(
     case -1:
       return id as P;
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
-    case 2:
       return (reader.readLong(offset)) as P;
     default:
       throw 'Illegal propertyIndex';
@@ -111,9 +105,9 @@ P _shootRoundDeserializePropNative<P>(
 dynamic _shootRoundSerializeWeb(
     IsarCollection<ShootRound> collection, ShootRound object) {
   final jsObj = IsarNative.newJsObject();
-  IsarNative.jsObjectSet(jsObj, 'date', object.date);
+  IsarNative.jsObjectSet(
+      jsObj, 'dateTime', object.dateTime.toUtc().millisecondsSinceEpoch);
   IsarNative.jsObjectSet(jsObj, 'id', object.id);
-  IsarNative.jsObjectSet(jsObj, 'round', object.round);
   IsarNative.jsObjectSet(jsObj, 'shootCount', object.shootCount);
   return jsObj;
 }
@@ -121,9 +115,13 @@ dynamic _shootRoundSerializeWeb(
 ShootRound _shootRoundDeserializeWeb(
     IsarCollection<ShootRound> collection, dynamic jsObj) {
   final object = ShootRound();
+  object.dateTime = IsarNative.jsObjectGet(jsObj, 'dateTime') != null
+      ? DateTime.fromMillisecondsSinceEpoch(
+              IsarNative.jsObjectGet(jsObj, 'dateTime'),
+              isUtc: true)
+          .toLocal()
+      : DateTime.fromMillisecondsSinceEpoch(0);
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-  object.round =
-      IsarNative.jsObjectGet(jsObj, 'round') ?? double.negativeInfinity;
   object.shootCount =
       IsarNative.jsObjectGet(jsObj, 'shootCount') ?? double.negativeInfinity;
   _shootRoundAttachLinks(collection,
@@ -133,13 +131,15 @@ ShootRound _shootRoundDeserializeWeb(
 
 P _shootRoundDeserializePropWeb<P>(Object jsObj, String propertyName) {
   switch (propertyName) {
-    case 'date':
-      return (IsarNative.jsObjectGet(jsObj, 'date') ?? '') as P;
+    case 'dateTime':
+      return (IsarNative.jsObjectGet(jsObj, 'dateTime') != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+                  IsarNative.jsObjectGet(jsObj, 'dateTime'),
+                  isUtc: true)
+              .toLocal()
+          : DateTime.fromMillisecondsSinceEpoch(0)) as P;
     case 'id':
       return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
-          as P;
-    case 'round':
-      return (IsarNative.jsObjectGet(jsObj, 'round') ?? double.negativeInfinity)
           as P;
     case 'shootCount':
       return (IsarNative.jsObjectGet(jsObj, 'shootCount') ??
@@ -159,9 +159,9 @@ extension ShootRoundQueryWhereSort
     return addWhereClauseInternal(const IdWhereClause.any());
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterWhere> anyDate() {
+  QueryBuilder<ShootRound, ShootRound, QAfterWhere> anyDateTime() {
     return addWhereClauseInternal(
-        const IndexWhereClause.any(indexName: 'date'));
+        const IndexWhereClause.any(indexName: 'dateTime'));
   }
 }
 
@@ -220,142 +220,125 @@ extension ShootRoundQueryWhere
     ));
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateEqualTo(
-      String date) {
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeEqualTo(
+      DateTime dateTime) {
     return addWhereClauseInternal(IndexWhereClause.equalTo(
-      indexName: 'date',
-      value: [date],
+      indexName: 'dateTime',
+      value: [dateTime],
     ));
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateNotEqualTo(
-      String date) {
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeNotEqualTo(
+      DateTime dateTime) {
     if (whereSortInternal == Sort.asc) {
       return addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'date',
-        upper: [date],
+        indexName: 'dateTime',
+        upper: [dateTime],
         includeUpper: false,
       )).addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'date',
-        lower: [date],
+        indexName: 'dateTime',
+        lower: [dateTime],
         includeLower: false,
       ));
     } else {
       return addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'date',
-        lower: [date],
+        indexName: 'dateTime',
+        lower: [dateTime],
         includeLower: false,
       )).addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'date',
-        upper: [date],
+        indexName: 'dateTime',
+        upper: [dateTime],
         includeUpper: false,
       ));
     }
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeGreaterThan(
+    DateTime dateTime, {
+    bool include = false,
+  }) {
+    return addWhereClauseInternal(IndexWhereClause.greaterThan(
+      indexName: 'dateTime',
+      lower: [dateTime],
+      includeLower: include,
+    ));
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeLessThan(
+    DateTime dateTime, {
+    bool include = false,
+  }) {
+    return addWhereClauseInternal(IndexWhereClause.lessThan(
+      indexName: 'dateTime',
+      upper: [dateTime],
+      includeUpper: include,
+    ));
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeBetween(
+    DateTime lowerDateTime,
+    DateTime upperDateTime, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return addWhereClauseInternal(IndexWhereClause.between(
+      indexName: 'dateTime',
+      lower: [lowerDateTime],
+      includeLower: includeLower,
+      upper: [upperDateTime],
+      includeUpper: includeUpper,
+    ));
   }
 }
 
 extension ShootRoundQueryFilter
     on QueryBuilder<ShootRound, ShootRound, QFilterCondition> {
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateTimeEqualTo(
+      DateTime value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
-      property: 'date',
+      property: 'dateTime',
       value: value,
-      caseSensitive: caseSensitive,
     ));
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateGreaterThan(
-    String value, {
-    bool caseSensitive = true,
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      dateTimeGreaterThan(
+    DateTime value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.gt,
       include: include,
-      property: 'date',
+      property: 'dateTime',
       value: value,
-      caseSensitive: caseSensitive,
     ));
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateLessThan(
-    String value, {
-    bool caseSensitive = true,
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateTimeLessThan(
+    DateTime value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.lt,
       include: include,
-      property: 'date',
+      property: 'dateTime',
       value: value,
-      caseSensitive: caseSensitive,
     ));
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateBetween(
-    String lower,
-    String upper, {
-    bool caseSensitive = true,
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateTimeBetween(
+    DateTime lower,
+    DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return addFilterConditionInternal(FilterCondition.between(
-      property: 'date',
+      property: 'dateTime',
       lower: lower,
       includeLower: includeLower,
       upper: upper,
       includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'date',
-      value: pattern,
-      caseSensitive: caseSensitive,
     ));
   }
 
@@ -400,54 +383,6 @@ extension ShootRoundQueryFilter
   }) {
     return addFilterConditionInternal(FilterCondition.between(
       property: 'id',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> roundEqualTo(
-      int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'round',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> roundGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'round',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> roundLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'round',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> roundBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'round',
       lower: lower,
       includeLower: includeLower,
       upper: upper,
@@ -520,12 +455,12 @@ extension ShootRoundQueryLinks
 
 extension ShootRoundQueryWhereSortBy
     on QueryBuilder<ShootRound, ShootRound, QSortBy> {
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByDate() {
-    return addSortByInternal('date', Sort.asc);
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByDateTime() {
+    return addSortByInternal('dateTime', Sort.asc);
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByDateDesc() {
-    return addSortByInternal('date', Sort.desc);
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByDateTimeDesc() {
+    return addSortByInternal('dateTime', Sort.desc);
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortById() {
@@ -534,14 +469,6 @@ extension ShootRoundQueryWhereSortBy
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByIdDesc() {
     return addSortByInternal('id', Sort.desc);
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByRound() {
-    return addSortByInternal('round', Sort.asc);
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByRoundDesc() {
-    return addSortByInternal('round', Sort.desc);
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByShootCount() {
@@ -555,12 +482,12 @@ extension ShootRoundQueryWhereSortBy
 
 extension ShootRoundQueryWhereSortThenBy
     on QueryBuilder<ShootRound, ShootRound, QSortThenBy> {
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByDate() {
-    return addSortByInternal('date', Sort.asc);
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByDateTime() {
+    return addSortByInternal('dateTime', Sort.asc);
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByDateDesc() {
-    return addSortByInternal('date', Sort.desc);
+  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByDateTimeDesc() {
+    return addSortByInternal('dateTime', Sort.desc);
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenById() {
@@ -569,14 +496,6 @@ extension ShootRoundQueryWhereSortThenBy
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByIdDesc() {
     return addSortByInternal('id', Sort.desc);
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByRound() {
-    return addSortByInternal('round', Sort.asc);
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByRoundDesc() {
-    return addSortByInternal('round', Sort.desc);
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByShootCount() {
@@ -590,17 +509,12 @@ extension ShootRoundQueryWhereSortThenBy
 
 extension ShootRoundQueryWhereDistinct
     on QueryBuilder<ShootRound, ShootRound, QDistinct> {
-  QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByDate(
-      {bool caseSensitive = true}) {
-    return addDistinctByInternal('date', caseSensitive: caseSensitive);
+  QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByDateTime() {
+    return addDistinctByInternal('dateTime');
   }
 
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctById() {
     return addDistinctByInternal('id');
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByRound() {
-    return addDistinctByInternal('round');
   }
 
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByShootCount() {
@@ -610,16 +524,12 @@ extension ShootRoundQueryWhereDistinct
 
 extension ShootRoundQueryProperty
     on QueryBuilder<ShootRound, ShootRound, QQueryProperty> {
-  QueryBuilder<ShootRound, String, QQueryOperations> dateProperty() {
-    return addPropertyNameInternal('date');
+  QueryBuilder<ShootRound, DateTime, QQueryOperations> dateTimeProperty() {
+    return addPropertyNameInternal('dateTime');
   }
 
   QueryBuilder<ShootRound, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
-  }
-
-  QueryBuilder<ShootRound, int, QQueryOperations> roundProperty() {
-    return addPropertyNameInternal('round');
   }
 
   QueryBuilder<ShootRound, int, QQueryOperations> shootCountProperty() {

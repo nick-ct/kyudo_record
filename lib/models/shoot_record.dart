@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:isar/isar.dart';
 
 part 'shoot_record.g.dart';

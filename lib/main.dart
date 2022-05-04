@@ -23,7 +23,7 @@ class App extends StatelessWidget {
           primaryColor: Colors.blue,
           appBarTheme: AppBarTheme(
             centerTitle: true,
-            color: Colors.grey[350],
+            color: Colors.blue[350],
           )),
       debugShowCheckedModeBanner: true,
       initialRoute: '/',

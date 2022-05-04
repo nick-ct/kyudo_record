@@ -99,6 +99,7 @@ ShootRecord _shootRecordDeserializeNative(
     IsarBinaryReader reader,
     List<int> offsets) {
   final object = ShootRecord();
+  object.dateTime = reader.readDateTime(offsets[0]);
   object.hitPositionX = reader.readDouble(offsets[1]);
   object.hitPositionY = reader.readDouble(offsets[2]);
   object.hitTarget = reader.readBool(offsets[3]);
@@ -143,6 +144,12 @@ dynamic _shootRecordSerializeWeb(
 ShootRecord _shootRecordDeserializeWeb(
     IsarCollection<ShootRecord> collection, dynamic jsObj) {
   final object = ShootRecord();
+  object.dateTime = IsarNative.jsObjectGet(jsObj, 'dateTime') != null
+      ? DateTime.fromMillisecondsSinceEpoch(
+              IsarNative.jsObjectGet(jsObj, 'dateTime'),
+              isUtc: true)
+          .toLocal()
+      : DateTime.fromMillisecondsSinceEpoch(0);
   object.hitPositionX =
       IsarNative.jsObjectGet(jsObj, 'hitPositionX') ?? double.negativeInfinity;
   object.hitPositionY =

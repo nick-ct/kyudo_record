@@ -7,11 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:flutter_heat_map/flutter_heat_map.dart';
-import 'package:isar/isar.dart';
 import 'package:kyudo_record/controller/database_controller.dart';
+import 'package:kyudo_record/models/shoot_history.dart';
 import 'package:kyudo_record/models/shoot_record.dart';
 import 'package:kyudo_record/models/shoot_round.dart';
-import 'package:path_provider/path_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,120 +21,143 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final DatabaseController _databaseController = Get.find();
-  late double paintArea;
-  late double deductPosition;
-  late double radius;
-  late double diameter;
+
+  double paintArea = Get.width * 0.95 > 500 ? 500 : Get.width * 0.95;
+  late double deductPosition = paintArea / 2;
+  double diameter = Get.width * 0.65 > 325 ? 325 : Get.width * 0.65;
+  late double radius = diameter / 2;
+
   int heatmapWidth = 350;
 
-  RxList<ShootRound> rounds = <ShootRound>[].obs;
-  RxList<Offset> points = <Offset>[].obs;
-  Rxn<Offset> newPoint = Rxn<Offset>();
-  Uint8List? bytes;
+  DateTime currDate = DateTime.now();
+  ShootHistory? shootHistory;
+  RxList<ShootRound> shootRounds = <ShootRound>[].obs;
+  RxList<ShootRecord> displayRecords = <ShootRecord>[].obs;
+  Rxn<ShootRecord> currShoot = Rxn<ShootRecord>();
+  ShootRecord? updatingRecord;
+
+  Uint8List? heatmapBytes;
   Rx<bool> showHitPoint = true.obs;
   Rx<bool> showHeatmap = false.obs;
 
   @override
   void initState() {
     super.initState();
-    paintArea = Get.width * 0.95 > 500 ? 500 : Get.width * 0.95;
-    deductPosition = paintArea / 2;
-    diameter = Get.width * 0.65 > 325 ? 325 : Get.width * 0.65;
-    radius = diameter / 2;
-    newRound();
+    loadHistory();
   }
 
-  bool testHitTarget(double? x, double? y) => sqrt(pow(x ?? 0.0, 2) + pow(y ?? 0.0, 2)) < (radius / deductPosition);
+  Future<void> loadHistory() async {
+    shootHistory = await _databaseController.getShootHistoryByDate(
+        '${currDate.year.toString()}-${currDate.month.toString().padLeft(2, '0')}-${currDate.day.toString().padLeft(2, '0')}');
 
-  Future<void> savePoint() async {
-    if (newPoint.value != null) {
-      ShootRecord shootRecord = ShootRecord()
-        ..missed = false
-        ..dateTime = DateTime.now()
-        ..hitPositionX = newPoint.value!.dx
-        ..hitPositionY = newPoint.value!.dy
-        ..hitTarget = testHitTarget(newPoint.value?.dx, newPoint.value?.dy);
-      await _databaseController.addShootRecord(shootRecord);
-      await addToRound(shootRecord);
+    if (shootHistory != null) {
+      await shootHistory?.relatedRound.load();
+      for (int i = 0; i < shootHistory!.relatedRound.toList().length; i++) {
+        await shootHistory?.relatedRound.toList()[i].relatedRecord.load();
+      }
 
-      points.add(newPoint.value!);
-      await createHeatMap();
-      newPoint.value = null;
-    }
-  }
+      List<ShootRound>? roundData = shootHistory?.relatedRound.toList();
+      roundData?.sort(((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0));
+      shootRounds.addAll(roundData!);
+      for (int i = 0; i < roundData.length; i++) {
+        List<ShootRecord> relatedRecords = shootRounds[i].relatedRecord.toList();
+        relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
+        displayRecords.addAll(relatedRecords.where((element) => !element.missed));
+      }
 
-  Future<void> missed() async {
-    ShootRecord shootRecord = ShootRecord()
-      ..missed = true
-      ..dateTime = DateTime.now()
-      ..hitPositionX = 0
-      ..hitPositionY = 0
-      ..hitTarget = false;
+      await updateHeatMap();
 
-    await _databaseController.addShootRecord(shootRecord);
-    await addToRound(shootRecord);
-  }
-
-  Future<void> addToRound(ShootRecord newRecord) async {
-    ShootRound currRound = rounds.last;
-    currRound.shootCount += 1;
-    currRound.relatedRecord.add(newRecord);
-    await _databaseController.addShootRound(currRound);
-
-    setState(() {});
-
-    if (currRound.shootCount == 4) {
+      if (shootHistory!.totalShoot % 4 == 0) {
+        newRound();
+      }
+    } else {
+      shootHistory = ShootHistory()
+        ..date =
+            '${currDate.year.toString()}-${currDate.month.toString().padLeft(2, '0')}-${currDate.day.toString().padLeft(2, '0')}'
+        ..totalRound = 0
+        ..totalShoot = 0
+        ..totalHitTarget = 0;
       newRound();
     }
   }
 
+  bool testHitTarget(double? x, double? y) => sqrt(pow(x ?? 0.0, 2) + pow(y ?? 0.0, 2)) < (radius / deductPosition);
+
+  void resetCurrShoot() => currShoot.value = null;
+
   void newRound() {
     ShootRound newRound = ShootRound()
-      ..round = rounds.length + 1
+      ..dateTime = DateTime.now()
       ..shootCount = 0;
-    rounds.add(newRound);
+    shootRounds.add(newRound);
+    shootHistory?.relatedRound.add(newRound);
+    shootHistory?.totalRound += 1;
   }
 
-  Future<void> createHeatMap() async {
+  Future<void> addShootRecord(ShootRecord? shootRecord) async {
+    await _databaseController.addShootRecord(shootRecord!);
+    await updateRound(shootRecord);
+    await updateHistory(shootRecord);
+
+    if (shootRounds.last.shootCount == 4) {
+      newRound();
+    }
+
+    if (!shootRecord.missed) {
+      displayRecords.add(shootRecord);
+      await updateHeatMap();
+    }
+
+    resetCurrShoot();
+
+    setState(() {});
+  }
+
+  Future<void> updateRound(ShootRecord newRecord) async {
+    ShootRound currRound = shootRounds.last;
+    currRound.shootCount += 1;
+    currRound.relatedRecord.add(newRecord);
+    await _databaseController.addShootRound(currRound);
+  }
+
+  Future<void> updateHistory(ShootRecord newRecord) async {
+    if (newRecord.hitTarget) shootHistory?.totalHitTarget += 1;
+    shootHistory?.totalShoot += 1;
+    await _databaseController.addShootHistory(shootHistory!);
+  }
+
+  Future<void> updateHeatMap() async {
     ImageProvider? provider =
         AssetImage('assets/images/transparent' + heatmapWidth.toString() + 'x' + heatmapWidth.toString() + '.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
 
     HeatMapPage heatMapPage = HeatMapPage(
       image: image,
-      events: points
+      events: displayRecords
           .map((element) => HeatMapEvent(
                   location: Offset(
-                (element.dx * heatmapWidth / 2 + heatmapWidth / 2),
-                (element.dy * heatmapWidth / 2 * -1 + heatmapWidth / 2),
+                (element.hitPositionX * heatmapWidth / 2 + heatmapWidth / 2),
+                (element.hitPositionY * heatmapWidth / 2 * -1 + heatmapWidth / 2),
               )))
           .toList(),
     );
-    bytes = await HeatMap.process(heatMapPage);
-  }
-
-  Future<void> testDB() async {
-    print(_databaseController.isar.shootRecords.countSync());
-    print(_databaseController.isar.shootRecords.filter().hitTargetEqualTo(true).countSync());
-
-    print(_databaseController.isar.shootRounds.countSync());
-    var data = _databaseController.isar.shootRounds.getSync(1);
-    data?.relatedRecord.loadSync();
-
-    data?.relatedRecord.forEach((e) {
-      print(e.dateTime.toString());
-    });
-  }
-
-  Future<void> clearDB() async {
-    _databaseController.isar.shootRecords.clearSync();
-    // print(_databaseController.isar);
+    heatmapBytes = await HeatMap.process(heatMapPage);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+            '${currDate.year.toString()}-${currDate.month.toString().padLeft(2, '0')}-${currDate.day.toString().padLeft(2, '0')}'),
+        actions: [
+          IconButton(
+            onPressed: () => _databaseController.cleanDatabase(),
+            icon: const Icon(Icons.remove),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -144,19 +166,20 @@ class _HomePageState extends State<HomePage> {
             child: Center(
               child: GestureDetector(
                 onTapDown: (tapDownDetails) {
-                  // print('x ' + (tapDownDetails.localPosition.dx).toString());
-                  // print('y ' + (tapDownDetails.localPosition.dy).toString());
-                  // print('x - deductPosition ' + (tapDownDetails.localPosition.dx - deductPosition).toString());
-                  // print('y - deductPosition ' + ((tapDownDetails.localPosition.dy - deductPosition) * -1).toString());
-                  newPoint.value = Offset(
-                    ((tapDownDetails.localPosition.dx - deductPosition) / deductPosition),
-                    ((tapDownDetails.localPosition.dy - deductPosition) * -1 / deductPosition),
-                  );
-                  // print(newPoint.value?.dx);
-                  // print(newPoint.value?.dy);
-                  // print((newPoint.value?.dx ?? 0.0) * deductPosition + deductPosition);
-                  // print((newPoint.value?.dy ?? 0.0) * deductPosition * -1 + deductPosition);
-                  // print('testHitTarget ' + testHitTarget(newPoint.value?.dx, newPoint.value?.dy).toString());
+                  currShoot.value = ShootRecord()
+                    ..missed = false
+                    ..dateTime = DateTime.now()
+                    ..hitPositionX = (tapDownDetails.localPosition.dx - deductPosition) / deductPosition
+                    ..hitPositionY = (tapDownDetails.localPosition.dy - deductPosition) * -1 / deductPosition
+                    ..hitTarget = testHitTarget(
+                      (tapDownDetails.localPosition.dx - deductPosition) / deductPosition,
+                      (tapDownDetails.localPosition.dy - deductPosition) * -1 / deductPosition,
+                    );
+
+                  if (updatingRecord != null) {
+                    currShoot.value?.id = updatingRecord!.id;
+                    currShoot.value?.dateTime = updatingRecord!.dateTime;
+                  }
                 },
                 child: Obx(
                   () => Container(
@@ -217,10 +240,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ],
-                        if (newPoint.value != null)
+                        //curr record
+                        if (currShoot.value != null)
                           Positioned(
-                            top: (newPoint.value?.dy ?? 0.0) * deductPosition * -1 + deductPosition - 12,
-                            left: (newPoint.value?.dx ?? 0.0) * deductPosition + deductPosition - 12,
+                            top: (currShoot.value?.hitPositionY ?? 0.0) * deductPosition * -1 + deductPosition - 12,
+                            left: (currShoot.value?.hitPositionX ?? 0.0) * deductPosition + deductPosition - 12,
                             child: const SizedBox(
                               height: 24,
                               width: 24,
@@ -232,11 +256,13 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ),
+                        //display record
                         if (showHitPoint.value)
-                          ...points
-                              .map((point) => Positioned(
-                                    top: point.dy * deductPosition * -1 + deductPosition - 12,
-                                    left: point.dx * deductPosition + deductPosition - 12,
+                          ...displayRecords
+                              .where((p0) => !p0.missed)
+                              .map((record) => Positioned(
+                                    top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
+                                    left: record.hitPositionX * deductPosition + deductPosition - 12,
                                     child: const SizedBox(
                                       height: 24,
                                       width: 24,
@@ -254,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                             top: 0,
                             left: 0,
                             child: Image.memory(
-                              bytes!,
+                              heatmapBytes!,
                               width: paintArea,
                               height: paintArea,
                               fit: BoxFit.contain,
@@ -278,19 +304,40 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const Spacer(),
                 ElevatedButton.icon(
-                  onPressed: () => missed(),
+                  onPressed: () async {
+                    if (updatingRecord != null) {
+                      await addShootRecord(ShootRecord()
+                        ..id = updatingRecord!.id
+                        ..missed = true
+                        ..dateTime = updatingRecord!.dateTime
+                        ..hitPositionX = 0
+                        ..hitPositionY = 0
+                        ..hitTarget = false);
+                    } else {
+                      await addShootRecord(ShootRecord()
+                        ..missed = true
+                        ..dateTime = DateTime.now()
+                        ..hitPositionX = 0
+                        ..hitPositionY = 0
+                        ..hitTarget = false);
+                    }
+                  },
                   icon: const Icon(Icons.remove),
                   label: const Text('Miss'),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
-                  onPressed: () => newPoint.value = null,
+                  onPressed: () => resetCurrShoot(),
                   icon: const Icon(Icons.delete),
                   label: const Text('Clear'),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
-                  onPressed: () => savePoint(),
+                  onPressed: () async {
+                    if (currShoot.value?.hitPositionX != null && currShoot.value?.hitPositionY != null) {
+                      await addShootRecord(currShoot.value);
+                    }
+                  },
                   icon: const Icon(Icons.done),
                   label: const Text('Save'),
                 ),
@@ -310,19 +357,13 @@ class _HomePageState extends State<HomePage> {
                     onChanged: (value) => showHitPoint.value = value,
                   ),
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: [
+                const Spacer(),
                 const Text('Heatmap'),
                 const Spacer(),
                 Obx(
                   () => CupertinoSwitch(
                     value: showHeatmap.value,
-                    onChanged: (value) => showHeatmap.value = (bytes == null ? false : value),
+                    onChanged: (value) => showHeatmap.value = (heatmapBytes == null ? false : value),
                   ),
                 ),
               ],
@@ -337,10 +378,10 @@ class _HomePageState extends State<HomePage> {
                   () => ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: rounds.length,
+                    itemCount: shootRounds.length,
                     separatorBuilder: (context, index) => const SizedBox(height: 8),
                     itemBuilder: (context, index) {
-                      List<ShootRecord> relatedRecords = rounds[index].relatedRecord.toList();
+                      List<ShootRecord> relatedRecords = shootRounds[index].relatedRecord.toList();
                       relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
                       return Card(
                         child: InkWell(
@@ -350,7 +391,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Row(
                                   children: [
-                                    Text('Round ' + rounds[index].round.toString()),
+                                    Text('Round ' + (index + 1).toString()),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -359,19 +400,38 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     for (int i = 0; i < 4; i++)
                                       i < relatedRecords.length
-                                          ? Container(
+                                          ? SizedBox(
                                               width: 30,
                                               height: 30,
                                               child: Center(
-                                                  child: relatedRecords[i].missed
-                                                      ? const Icon(Icons.remove)
-                                                      : relatedRecords[i].hitTarget
-                                                          ? const Icon(Icons.check)
-                                                          : const Icon(Icons.close)))
+                                                child: relatedRecords[i].missed
+                                                    ? const Icon(
+                                                        Icons.remove,
+                                                        color: Colors.grey,
+                                                      )
+                                                    : relatedRecords[i].hitTarget
+                                                        ? const FaIcon(
+                                                            FontAwesomeIcons.circle,
+                                                            color: Colors.blue,
+                                                          )
+                                                        : const Icon(
+                                                            Icons.close,
+                                                            color: Colors.red,
+                                                          ),
+                                              ),
+                                            )
                                           : Container(
                                               width: 30,
                                               height: 30,
-                                              child: const Icon(Icons.add),
+                                              decoration: BoxDecoration(
+                                                borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+                                                border: Border.all(color: Colors.blue),
+                                              ),
+                                              child: const Icon(
+                                                Icons.add,
+                                                color: Colors.blue,
+                                                size: 16,
+                                              ),
                                             )
                                   ],
                                 ),
@@ -386,18 +446,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-
-          // Obx(
-          //   () => Wrap(
-          //     children: points.map((element) {
-          //       bool hitTarget = testHitTarget(element.dx, element.dy);
-          //       return Icon(
-          //         hitTarget ? Icons.circle_outlined : Icons.close,
-          //         color: hitTarget ? Colors.blue : Colors.red,
-          //       );
-          //     }).toList(),
-          //   ),
-          // ),
         ],
       ),
     );
