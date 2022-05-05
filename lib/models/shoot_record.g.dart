@@ -31,8 +31,8 @@ const ShootRecordSchema = CollectionSchema(
       IndexValueType.long,
     ]
   },
-  linkIds: {},
-  backlinkLinkNames: {},
+  linkIds: {'round': 0},
+  backlinkLinkNames: {'round': 'relatedRecord'},
   getId: _shootRecordGetId,
   setId: _shootRecordSetId,
   getLinks: _shootRecordGetLinks,
@@ -59,7 +59,7 @@ void _shootRecordSetId(ShootRecord object, int id) {
 }
 
 List<IsarLinkBase> _shootRecordGetLinks(ShootRecord object) {
-  return [];
+  return [object.round];
 }
 
 void _shootRecordSerializeNative(
@@ -105,6 +105,7 @@ ShootRecord _shootRecordDeserializeNative(
   object.hitTarget = reader.readBool(offsets[3]);
   object.id = id;
   object.missed = reader.readBool(offsets[4]);
+  _shootRecordAttachLinks(collection, id, object);
   return object;
 }
 
@@ -157,6 +158,8 @@ ShootRecord _shootRecordDeserializeWeb(
   object.hitTarget = IsarNative.jsObjectGet(jsObj, 'hitTarget') ?? false;
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
   object.missed = IsarNative.jsObjectGet(jsObj, 'missed') ?? false;
+  _shootRecordAttachLinks(collection,
+      IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
   return object;
 }
 
@@ -187,7 +190,9 @@ P _shootRecordDeserializePropWeb<P>(Object jsObj, String propertyName) {
   }
 }
 
-void _shootRecordAttachLinks(IsarCollection col, int id, ShootRecord object) {}
+void _shootRecordAttachLinks(IsarCollection col, int id, ShootRecord object) {
+  object.round.attach(col, col.isar.shootRounds, 'round', id);
+}
 
 extension ShootRecordQueryWhereSort
     on QueryBuilder<ShootRecord, ShootRecord, QWhere> {
@@ -511,7 +516,16 @@ extension ShootRecordQueryFilter
 }
 
 extension ShootRecordQueryLinks
-    on QueryBuilder<ShootRecord, ShootRecord, QFilterCondition> {}
+    on QueryBuilder<ShootRecord, ShootRecord, QFilterCondition> {
+  QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> round(
+      FilterQuery<ShootRound> q) {
+    return linkInternal(
+      isar.shootRounds,
+      q,
+      'round',
+    );
+  }
+}
 
 extension ShootRecordQueryWhereSortBy
     on QueryBuilder<ShootRecord, ShootRecord, QSortBy> {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kyudo_record/controller/database_controller.dart';
-import 'package:kyudo_record/views/homepage.dart';
+import 'package:kyudo_record/views/shoot_record/shoot_record_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,12 +26,12 @@ class App extends StatelessWidget {
             color: Colors.blue[350],
           )),
       debugShowCheckedModeBanner: true,
-      initialRoute: '/',
+      initialRoute: '/shootRecordPage',
       onGenerateRoute: (settings) {
         switch (settings.name) {
-          case '/':
+          case '/shootRecordPage':
             return GetPageRoute(
-              page: () => const HomePage(),
+              page: () => const ShootRecordPage(),
               settings: settings,
               transition: Transition.fadeIn,
             );

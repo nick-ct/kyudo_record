@@ -17,11 +17,11 @@ class DatabaseController extends GetxController {
     );
   }
 
-  Future<int?> addShootRecord(ShootRecord newRecord) async {
+  Future<int?> addShootRecord(ShootRecord data) async {
     int? recId;
     await isar.writeTxn((isar) async {
       recId = await isar.shootRecords.put(
-        newRecord,
+        data,
         replaceOnConflict: true,
         saveLinks: true,
       );
@@ -29,11 +29,17 @@ class DatabaseController extends GetxController {
     return recId;
   }
 
-  Future<int?> addShootRound(ShootRound newRound) async {
+  Future<void> removeShootRecord(ShootRecord data) async {
+    await isar.writeTxn((isar) async {
+      await isar.shootRecords.delete(data.id);
+    });
+  }
+
+  Future<int?> addShootRound(ShootRound data) async {
     int? recId;
     await isar.writeTxn((isar) async {
       recId = await isar.shootRounds.put(
-        newRound,
+        data,
         replaceOnConflict: true,
         saveLinks: true,
       );
@@ -41,11 +47,17 @@ class DatabaseController extends GetxController {
     return recId;
   }
 
-  Future<int?> addShootHistory(ShootHistory newHistory) async {
+  Future<void> removeShootRound(ShootRound data) async {
+    await isar.writeTxn((isar) async {
+      await isar.shootRounds.delete(data.id);
+    });
+  }
+
+  Future<int?> addShootHistory(ShootHistory data) async {
     int? recId;
     await isar.writeTxn((isar) async {
       recId = await isar.shootHistorys.put(
-        newHistory,
+        data,
         replaceOnConflict: true,
         saveLinks: true,
       );

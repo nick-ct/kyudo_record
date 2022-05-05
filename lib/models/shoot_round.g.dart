@@ -25,8 +25,8 @@ const ShootRoundSchema = CollectionSchema(
       IndexValueType.long,
     ]
   },
-  linkIds: {'relatedRecord': 0},
-  backlinkLinkNames: {},
+  linkIds: {'relatedRecord': 0, 'history': 1},
+  backlinkLinkNames: {'history': 'relatedRound'},
   getId: _shootRoundGetId,
   setId: _shootRoundSetId,
   getLinks: _shootRoundGetLinks,
@@ -53,7 +53,7 @@ void _shootRoundSetId(ShootRound object, int id) {
 }
 
 List<IsarLinkBase> _shootRoundGetLinks(ShootRound object) {
-  return [object.relatedRecord];
+  return [object.relatedRecord, object.history];
 }
 
 void _shootRoundSerializeNative(
@@ -163,6 +163,7 @@ P _shootRoundDeserializePropWeb<P>(Object jsObj, String propertyName) {
 
 void _shootRoundAttachLinks(IsarCollection col, int id, ShootRound object) {
   object.relatedRecord.attach(col, col.isar.shootRecords, 'relatedRecord', id);
+  object.history.attach(col, col.isar.shootHistorys, 'history', id);
 }
 
 extension ShootRoundQueryWhereSort
@@ -510,6 +511,15 @@ extension ShootRoundQueryLinks
       isar.shootRecords,
       q,
       'relatedRecord',
+    );
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> history(
+      FilterQuery<ShootHistory> q) {
+    return linkInternal(
+      isar.shootHistorys,
+      q,
+      'history',
     );
   }
 }
