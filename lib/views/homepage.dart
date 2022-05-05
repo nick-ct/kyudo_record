@@ -166,6 +166,7 @@ class _HomePageState extends State<HomePage> {
                   reset();
 
                   await loadHistory();
+                  setState(() {});
                 },
                 icon: const Icon(Icons.arrow_back)),
             Obx(() => Text(
@@ -176,16 +177,17 @@ class _HomePageState extends State<HomePage> {
                   reset();
 
                   await loadHistory();
+                  setState(() {});
                 },
                 icon: const Icon(Icons.arrow_forward)),
           ],
         ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: () => _databaseController.cleanDatabase(),
-        //     icon: const Icon(Icons.remove),
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            onPressed: () => _databaseController.cleanDatabase(),
+            icon: const Icon(Icons.remove),
+          ),
+        ],
       ),
       body: Column(
         children: [
