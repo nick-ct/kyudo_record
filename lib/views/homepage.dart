@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   Uint8List? heatmapBytes;
   Rx<bool> showHitPoint = true.obs;
-  Rx<bool> showHeatmap = false.obs;
+  Rx<bool> showHeatmap = true.obs;
 
   @override
   void initState() {
@@ -97,9 +97,19 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> addShootRecord(ShootRecord? shootRecord) async {
     await _databaseController.addShootRecord(shootRecord!);
-    await updateRound(shootRecord);
-    await updateHistory(shootRecord);
+    //update Round
+    ShootRound currRound = shootRounds.last;
+    if (shootRecord.hitTarget) currRound.hitCount += 1;
+    currRound.shootCount += 1;
+    currRound.relatedRecord.add(shootRecord);
+    await _databaseController.addShootRound(currRound);
 
+    //update History
+    if (shootRecord.hitTarget) shootHistory?.totalHitTarget += 1;
+    shootHistory?.totalShoot += 1;
+    await _databaseController.addShootHistory(shootHistory!);
+
+    //check round
     if (shootRounds.last.shootCount == 4) {
       newRound();
     }
@@ -112,20 +122,6 @@ class _HomePageState extends State<HomePage> {
     resetCurrShoot();
 
     setState(() {});
-  }
-
-  Future<void> updateRound(ShootRecord newRecord) async {
-    ShootRound currRound = shootRounds.last;
-    if (newRecord.hitTarget) currRound.hitCount += 1;
-    currRound.shootCount += 1;
-    currRound.relatedRecord.add(newRecord);
-    await _databaseController.addShootRound(currRound);
-  }
-
-  Future<void> updateHistory(ShootRecord newRecord) async {
-    if (newRecord.hitTarget) shootHistory?.totalHitTarget += 1;
-    shootHistory?.totalShoot += 1;
-    await _databaseController.addShootHistory(shootHistory!);
   }
 
   Future<void> updateHeatMap() async {
@@ -146,30 +142,14 @@ class _HomePageState extends State<HomePage> {
     heatmapBytes = await HeatMap.process(heatMapPage);
   }
 
-  Future<void> previousDate() async {
+  void reset() {
     shootHistory = null;
     shootRounds.clear();
     displayRecords.clear();
     resetCurrShoot();
     heatmapBytes = null;
     showHitPoint.value = true;
-    showHeatmap.value = false;
-
-    currDate.value = currDate.value.subtract(const Duration(days: 1));
-    await loadHistory();
-  }
-
-  Future<void> nextDate() async {
-    shootHistory = null;
-    shootRounds.clear();
-    displayRecords.clear();
-    resetCurrShoot();
-    heatmapBytes = null;
-    showHitPoint.value = true;
-    showHeatmap.value = false;
-
-    currDate.value = currDate.value.add(const Duration(days: 1));
-    await loadHistory();
+    showHeatmap.value = true;
   }
 
   @override
@@ -180,10 +160,24 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(onPressed: () async => await previousDate(), icon: const Icon(Icons.arrow_back)),
+            IconButton(
+                onPressed: () async {
+                  currDate.value = currDate.value.subtract(const Duration(days: 1));
+                  reset();
+
+                  await loadHistory();
+                },
+                icon: const Icon(Icons.arrow_back)),
             Obx(() => Text(
                 '${currDate.value.year.toString()}-${currDate.value.month.toString().padLeft(2, '0')}-${currDate.value.day.toString().padLeft(2, '0')}')),
-            IconButton(onPressed: () async => await nextDate(), icon: const Icon(Icons.arrow_forward)),
+            IconButton(
+                onPressed: () async {
+                  currDate.value = currDate.value.add(const Duration(days: 1));
+                  reset();
+
+                  await loadHistory();
+                },
+                icon: const Icon(Icons.arrow_forward)),
           ],
         ),
         // actions: [
@@ -310,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ))
                               .toList(),
-                        if (showHeatmap.value)
+                        if (showHeatmap.value && heatmapBytes != null)
                           Positioned(
                             top: 0,
                             left: 0,
