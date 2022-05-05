@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         displayRecords.addAll(relatedRecords.where((element) => !element.missed));
       }
 
-      await updateHeatMap();
+      if (displayRecords.isNotEmpty) await updateHeatMap();
 
       if (shootHistory!.totalShoot % 4 == 0) {
         newRound();
@@ -392,7 +392,7 @@ class _HomePageState extends State<HomePage> {
                 Obx(
                   () => CupertinoSwitch(
                     value: showHeatmap.value,
-                    onChanged: (value) => showHeatmap.value = (heatmapBytes == null ? false : value),
+                    onChanged: (value) => showHeatmap.value = value,
                   ),
                 ),
               ],
