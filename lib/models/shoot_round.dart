@@ -12,6 +12,8 @@ class ShootRound {
   late DateTime dateTime;
   late int shootCount;
   late int hitCount;
+  //store enum index
+  late int matoSize;
   IsarLinks<ShootRecord> relatedRecord = IsarLinks<ShootRecord>();
 
   @Backlink(to: 'relatedRound')
