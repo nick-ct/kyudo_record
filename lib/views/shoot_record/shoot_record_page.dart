@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:kyudo_record/controller/shoot_controller.dart';
 import 'package:kyudo_record/views/framework.dart';
+import 'package:kyudo_record/views/shoot_record/shoot_record_list.dart';
 import 'package:kyudo_record/views/shoot_record/shoot_record_mato.dart';
 import 'package:kyudo_record/views/shoot_record/shoot_record_summary.dart';
 
@@ -13,13 +15,14 @@ class ShootRecordPage extends StatefulWidget {
 }
 
 class _ShootRecordPageState extends State<ShootRecordPage> {
+  final ShootController _shootController = Get.put(ShootController());
   final Rx<int> _selectedIndex = 0.obs;
-  Rx<DateTime> currDate = DateTime.now().obs;
 
-  void _onItemTapped(int index) => _selectedIndex.value = index;
-
-  String currDateString(DateTime dateTime) =>
-      '${dateTime.year.toString()}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}';
+  @override
+  void initState() {
+    super.initState();
+    _shootController.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +33,17 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-                onPressed: () => currDate.value = currDate.value.subtract(const Duration(days: 1)),
+                onPressed: () {
+                  DateTime newDate = _shootController.currDate.value.subtract(const Duration(days: 1));
+                  _shootController.updateDate(newDate);
+                },
                 icon: const Icon(Icons.arrow_back)),
-            Obx(() => Text(
-                '${currDate.value.year.toString()}-${currDate.value.month.toString().padLeft(2, '0')}-${currDate.value.day.toString().padLeft(2, '0')}')),
+            Obx(() => Text(_shootController.currDateString())),
             IconButton(
-                onPressed: () => currDate.value = currDate.value.add(const Duration(days: 1)),
+                onPressed: () {
+                  DateTime newDate = _shootController.currDate.value.add(const Duration(days: 1));
+                  _shootController.updateDate(newDate);
+                },
                 icon: const Icon(Icons.arrow_forward)),
           ],
         ),
@@ -45,24 +53,31 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
             onPressed: () async {
               DateTime? selectedDate = await showDatePicker(
                 context: context,
-                initialDate: currDate.value,
+                initialDate: _shootController.currDate.value,
                 firstDate: DateTime(2020, 01),
                 lastDate: DateTime(2100, 12),
               );
 
               if (selectedDate != null) {
-                currDate.value = selectedDate;
+                _shootController.updateDate(selectedDate);
               }
             },
           ),
         ],
       ),
       body: Scaffold(
-        body: Obx(
-          () => _selectedIndex.value == 0
-              ? ShootRecordMato(key: Key(currDateString(currDate.value)), currDate: currDateString(currDate.value))
-              : const ShootRecordSummary(),
-        ),
+        body: Obx(() {
+          switch (_selectedIndex.value) {
+            case 0:
+              return ShootRecordMato(key: Key(_shootController.currDate.value.toString()));
+            case 1:
+              return ShootRecordList(key: Key(_shootController.currDate.value.toString()));
+            case 2:
+              return ShootRecordSummary(key: Key(_shootController.currDate.value.toString()));
+            default:
+              return Container();
+          }
+        }),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
@@ -71,13 +86,17 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
                 label: 'Mato',
               ),
               BottomNavigationBarItem(
+                icon: FaIcon(FontAwesomeIcons.listUl),
+                label: 'List',
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.summarize),
                 label: 'Summary',
               ),
             ],
             currentIndex: _selectedIndex.value,
             selectedItemColor: Colors.blue,
-            onTap: _onItemTapped,
+            onTap: (index) => _selectedIndex.value = index,
           ),
         ),
       ),

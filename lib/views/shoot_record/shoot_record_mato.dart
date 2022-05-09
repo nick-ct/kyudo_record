@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -7,33 +6,28 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:flutter_heat_map/flutter_heat_map.dart';
-import 'package:kyudo_record/controller/database_controller.dart';
-import 'package:kyudo_record/models/shoot_history.dart';
+import 'package:kyudo_record/controller/shoot_controller.dart';
 import 'package:kyudo_record/models/shoot_record.dart';
 import 'package:kyudo_record/models/shoot_round.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:kyudo_record/classes/mato_widget.dart';
 
 class ShootRecordMato extends StatefulWidget {
-  final String currDate;
-  const ShootRecordMato({Key? key, required this.currDate}) : super(key: key);
+  const ShootRecordMato({Key? key}) : super(key: key);
 
   @override
   State<ShootRecordMato> createState() => _ShootRecordMatoState();
 }
 
 class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderStateMixin {
-  final DatabaseController _databaseController = Get.find();
+  final ShootController _shootController = Get.find();
 
   late double paintArea = Get.width * 0.95 > 500 ? 500 : Get.width * 0.95;
   late double deductPosition = paintArea / 2;
 
   int heatmapWidth = 350;
-  MatoSize currMatoSize = MatoSize.metre28;
 
   Mato mato = Mato();
-  ShootHistory? shootHistory;
-  RxList<ShootRound> shootRounds = <ShootRound>[].obs;
   RxList<ShootRecord> displayRecords = <ShootRecord>[].obs;
   Rxn<ShootRecord> currShoot = Rxn<ShootRecord>();
   MatoSize? originalMatoSize;
@@ -47,67 +41,37 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
   @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
-    reset();
-    await loadHistory();
-    setState(() {});
+
+    displayRecords.clear();
+    resetCurrShoot();
+    resetUpdatingShoot();
+    heatmapBytes = null;
+    showHitPoint.value = true;
+    showHeatmap.value = true;
+
+    while (_shootController.loading.value) {
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    for (int i = 0; i < _shootController.shootRounds.length; i++) {
+      List<ShootRecord> relatedRecords = _shootController.shootRounds[i].relatedRecord.toList();
+      relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
+      displayRecords.addAll(relatedRecords.where((element) => !element.missed));
+    }
+
+    mato.updateMatoSize(MatoSize.values[_shootController.shootRounds.last.matoSize]);
+
+    await updateHeatMap();
+
+    if (mounted) setState(() {});
   }
 
   void resetCurrShoot() => currShoot.value = null;
 
   void resetUpdatingShoot() => updatingShoot.value = null;
 
-  Future<void> loadHistory() async {
-    shootHistory = await _databaseController.getShootHistoryByDate(widget.currDate);
-
-    if (shootHistory != null) {
-      await shootHistory?.relatedRound.load();
-      for (int i = 0; i < shootHistory!.relatedRound.toList().length; i++) {
-        await shootHistory?.relatedRound.toList()[i].relatedRecord.load();
-      }
-
-      List<ShootRound>? roundData = shootHistory?.relatedRound.toList();
-      roundData?.sort(((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0));
-      shootRounds.addAll(roundData!);
-      for (int i = 0; i < roundData.length; i++) {
-        List<ShootRecord> relatedRecords = shootRounds[i].relatedRecord.toList();
-        relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
-        displayRecords.addAll(relatedRecords.where((element) => !element.missed));
-      }
-
-      if (displayRecords.isNotEmpty) await updateHeatMap();
-
-      if (shootRounds.isEmpty || shootRounds.last.shootCount == 4) {
-        newShootRound();
-      }
-    } else {
-      shootHistory = ShootHistory()
-        ..date = widget.currDate
-        ..totalRound = 0
-        ..totalShoot = 0
-        ..totalHitTarget = 0;
-      newShootRound();
-    }
-  }
-
   Future<void> addShootRecord(ShootRecord shootRecord, int round) async {
-    if (shootRounds[round].shootCount >= 4) return;
-
-    await _databaseController.addShootRecord(shootRecord);
-    //update Round
-    if (shootRecord.hitTarget) shootRounds[round].hitCount += 1;
-    shootRounds[round].shootCount += 1;
-    shootRounds[round].relatedRecord.add(shootRecord);
-    await _databaseController.addShootRound(shootRounds[round]);
-
-    //update History
-    if (shootRecord.hitTarget) shootHistory?.totalHitTarget += 1;
-    shootHistory?.totalShoot += 1;
-    await _databaseController.addShootHistory(shootHistory!);
-
-    //check round
-    if (shootRounds.last.shootCount == 4) {
-      newShootRound();
-    }
+    await _shootController.addShootRecord(shootRecord, round);
 
     if (!shootRecord.missed) {
       displayRecords.add(shootRecord);
@@ -120,28 +84,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
   }
 
   Future<void> updateShootRecord(ShootRecord originalShootRecord, ShootRecord newShootRecord) async {
-    await originalShootRecord.round.load();
-    ShootRound round = shootRounds.where((element) => element.id == originalShootRecord.round.value?.id).first;
-
-    if (originalShootRecord.hitTarget != newShootRecord.hitTarget) {
-      if (newShootRecord.hitTarget) {
-        round.hitCount += 1;
-        shootHistory?.totalHitTarget += 1;
-      } else {
-        round.hitCount -= 1;
-        shootHistory?.totalHitTarget -= 1;
-      }
-    }
-
-    round.relatedRecord.where((element) => element.id == originalShootRecord.id).first
-      ..hitPositionX = newShootRecord.hitPositionX
-      ..hitPositionY = newShootRecord.hitPositionY
-      ..hitTarget = newShootRecord.hitTarget
-      ..missed = newShootRecord.missed;
-
-    await _databaseController.addShootRecord(newShootRecord);
-    await _databaseController.addShootRound(round);
-    await _databaseController.addShootHistory(shootHistory!);
+    await _shootController.updateShootRecord(originalShootRecord, newShootRecord);
 
     if (!newShootRecord.missed) {
       displayRecords.add(newShootRecord);
@@ -151,76 +94,27 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
   }
 
   Future<void> removeShootRecord(ShootRecord shootRecord) async {
-    await shootRecord.round.load();
-    ShootRound round = shootRounds.where((element) => element.id == shootRecord.round.value?.id).first;
-
-    round.shootCount -= 1;
-    shootHistory?.totalShoot -= 1;
-    if (shootRecord.hitTarget) {
-      round.hitCount -= 1;
-      shootHistory?.totalHitTarget -= 1;
-    }
-
-    round.relatedRecord.remove(shootRecord);
-
-    await _databaseController.removeShootRecord(shootRecord);
-    await _databaseController.addShootRound(round);
-    await _databaseController.addShootHistory(shootHistory!);
+    await _shootController.removeShootRecord(shootRecord);
 
     await resetScreen();
   }
 
-  void newShootRound() {
-    ShootRound newShootRound = ShootRound()
-      ..dateTime = DateTime.now()
-      ..shootCount = 0
-      ..matoSize = currMatoSize.index
-      ..hitCount = 0;
-    shootRounds.add(newShootRound);
-    shootHistory?.relatedRound.add(newShootRound);
-    shootHistory?.totalRound += 1;
-  }
-
   Future<void> updateMatoSize(MatoSize matoSize, ShootRound shootRound) async {
+    _shootController.updateMatoSize(matoSize);
     mato.updateMatoSize(matoSize);
-    shootRound.matoSize = matoSize.index;
 
-    //reset round hit count
-    shootHistory?.totalHitTarget -= shootRound.hitCount;
-    shootRound.hitCount = 0;
+    await _shootController.updateRoundMatoSize(matoSize, shootRound);
 
-    //test hit for every shoot in round
-    for (int i = 0; i < shootRound.shootCount; i++) {
-      ShootRecord record = shootRound.relatedRecord.elementAt(i);
-      record.hitTarget = mato.testHitTarget(record.hitPositionX * deductPosition, record.hitPositionY * deductPosition);
-      _databaseController.addShootRecord(record);
-      if (record.hitTarget) {
-        shootHistory?.totalHitTarget++;
-        shootRound.hitCount++;
-      }
-    }
-
-    _databaseController.addShootRound(shootRound);
-    _databaseController.addShootHistory(shootHistory!);
-
-    mato.updateMatoSize(MatoSize.values[shootRounds.last.matoSize]);
+    mato.updateMatoSize(MatoSize.values[_shootController.shootRounds.last.matoSize]);
     setState(() {});
   }
 
   Future<void> removeShootRound(ShootRound shootRound) async {
-    shootHistory?.totalHitTarget -= shootRound.hitCount;
-    shootHistory?.totalShoot -= shootRound.shootCount;
-    shootHistory?.totalRound -= 1;
-    shootHistory?.relatedRound.remove(shootRound);
-    await _databaseController.addShootHistory(shootHistory!);
-
     for (int i = 0; i < shootRound.relatedRecord.length; i++) {
       displayRecords
           .removeAt(displayRecords.indexWhere((element) => element.id == shootRound.relatedRecord.toList()[i].id));
-      await _databaseController.removeShootRecord(shootRound.relatedRecord.toList()[i]);
     }
-
-    await _databaseController.removeShootRound(shootRound);
+    await _shootController.removeShootRound(shootRound);
 
     await resetScreen();
   }
@@ -245,16 +139,6 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
           .toList(),
     );
     heatmapBytes = await HeatMap.process(heatMapPage);
-  }
-
-  void reset() {
-    shootHistory = null;
-    shootRounds.clear();
-    displayRecords.clear();
-    resetCurrShoot();
-    heatmapBytes = null;
-    showHitPoint.value = true;
-    showHeatmap.value = true;
   }
 
   Future<void> resetScreen() async {
@@ -384,7 +268,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                   offset: const Offset(30, 30),
                   icon: const FaIcon(FontAwesomeIcons.bullseye),
                   iconSize: 40,
-                  onSelected: (matoSize) => updateMatoSize(matoSize, shootRounds.last),
+                  onSelected: (matoSize) => updateMatoSize(matoSize, _shootController.shootRounds.last),
                   itemBuilder: (BuildContext context) {
                     return [
                       CheckedPopupMenuItem(
@@ -438,7 +322,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                           ..hitPositionX = 0
                           ..hitPositionY = 0
                           ..hitTarget = false,
-                        shootRounds.length - 1,
+                        _shootController.shootRounds.length - 1,
                       );
                     }
                   },
@@ -457,7 +341,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                       if (currShoot.value?.hitPositionX != null && currShoot.value?.hitPositionY != null) {
                         await addShootRecord(
                           currShoot.value!,
-                          shootRounds.length - 1,
+                          _shootController.shootRounds.length - 1,
                         );
                       }
                     }
@@ -499,11 +383,11 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Obx(
                 () => ListView.separated(
-                  itemCount: shootRounds.length,
+                  itemCount: _shootController.shootRounds.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
-                    MatoSize matoSize = MatoSize.values[shootRounds[index].matoSize];
-                    List<ShootRecord> relatedRecords = shootRounds[index].relatedRecord.toList();
+                    MatoSize matoSize = MatoSize.values[_shootController.shootRounds[index].matoSize];
+                    List<ShootRecord> relatedRecords = _shootController.shootRounds[index].relatedRecord.toList();
                     relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
                     return Card(
                       child: InkWell(
@@ -542,7 +426,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                           ),
                                         ),
                                         onSelected: (matoSize) async {
-                                          await updateMatoSize(matoSize, shootRounds[index]);
+                                          await updateMatoSize(matoSize, _shootController.shootRounds[index]);
                                           Slidable.of(ctx)?.close();
                                         },
                                         itemBuilder: (BuildContext context) {
@@ -567,10 +451,13 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                       builder: (ctx) => InkWell(
                                         onTap: () async {
                                           Slidable.of(ctx)?.close();
-                                          await removeShootRound(shootRounds[index]);
-                                          shootRounds.removeAt(index);
+                                          await removeShootRound(_shootController.shootRounds[index]);
+                                          _shootController.shootRounds.removeAt(index);
 
-                                          if (shootRounds.isEmpty || shootRounds.last.shootCount == 4) newShootRound();
+                                          if (_shootController.shootRounds.isEmpty ||
+                                              _shootController.shootRounds.last.shootCount == 4) {
+                                            _shootController.newShootRound();
+                                          }
                                         },
                                         child: Container(
                                           color: Colors.grey,
@@ -638,9 +525,9 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                                     ? '28M'
                                                     : ''),
                                             Text('Hit Rate ' +
-                                                (shootRounds[index].shootCount > 0
-                                                    ? ((shootRounds[index].hitCount /
-                                                                shootRounds[index].shootCount *
+                                                (_shootController.shootRounds[index].shootCount > 0
+                                                    ? ((_shootController.shootRounds[index].hitCount /
+                                                                _shootController.shootRounds[index].shootCount *
                                                                 100)
                                                             .toStringAsFixed(0) +
                                                         '%')
@@ -732,9 +619,14 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                       ],
                                     ),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_back_ios,
-                                    color: Colors.grey,
+                                  Builder(
+                                    builder: (ctx) => IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_back_ios,
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () => Slidable.of(ctx)?.openEndActionPane(),
+                                    ),
                                   ),
                                 ],
                               ),

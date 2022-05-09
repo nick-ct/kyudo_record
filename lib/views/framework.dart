@@ -30,11 +30,22 @@ class _FrameworkState extends State<Framework> {
   @override
   Widget build(BuildContext context) {
     Widget drawer = Drawer(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            children: page
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Stack(
+                  children: const [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Text('Drawer Header'),
+                    ),
+                  ],
+                )),
+            ...page
                 .map((e) => Container(
                       height: 60,
                       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -45,7 +56,7 @@ class _FrameworkState extends State<Framework> {
                       ),
                     ))
                 .toList(),
-          ),
+          ],
         ),
       ),
     );

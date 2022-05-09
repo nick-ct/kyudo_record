@@ -76,6 +76,5 @@ class DatabaseController extends GetxController {
       await isar.shootRounds.clear();
       await isar.shootRecords.clear();
     });
-    print('clear db finish');
   }
 }
