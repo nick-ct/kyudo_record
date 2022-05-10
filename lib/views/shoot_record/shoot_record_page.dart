@@ -66,18 +66,21 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
         ],
       ),
       body: Scaffold(
-        body: Obx(() {
-          switch (_selectedIndex.value) {
-            case 0:
-              return ShootRecordMato(key: Key(_shootController.currDate.value.toString()));
-            case 1:
-              return ShootRecordList(key: Key(_shootController.currDate.value.toString()));
-            case 2:
-              return ShootRecordSummary(key: Key(_shootController.currDate.value.toString()));
-            default:
-              return Container();
-          }
-        }),
+        body: GetBuilder<ShootController>(
+          init: _shootController,
+          builder: (controller) {
+            switch (_selectedIndex.value) {
+              case 0:
+                return ShootRecordMato(key: Key(controller.currDate.value.toString()));
+              case 1:
+                return ShootRecordList(key: Key(controller.currDate.value.toString()));
+              case 2:
+                return ShootRecordSummary(key: Key(controller.currDate.value.toString()));
+              default:
+                return Container();
+            }
+          },
+        ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
@@ -96,7 +99,10 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
             ],
             currentIndex: _selectedIndex.value,
             selectedItemColor: Colors.blue,
-            onTap: (index) => _selectedIndex.value = index,
+            onTap: (index) {
+              _selectedIndex.value = index;
+              _shootController.update();
+            },
           ),
         ),
       ),

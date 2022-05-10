@@ -29,10 +29,6 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
     super.didChangeDependencies();
     loading.value = true;
 
-    while (_shootController.loading.value) {
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
-
     for (int i = 0; i < MatoSize.values.length; i++) {
       var _roundList = _shootController.shootRounds.where((p0) => p0.matoSize == i).toList();
       if (_roundList.isNotEmpty) {

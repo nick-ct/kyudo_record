@@ -49,10 +49,6 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
     showHitPoint.value = true;
     showHeatmap.value = true;
 
-    while (_shootController.loading.value) {
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
-
     for (int i = 0; i < _shootController.shootRounds.length; i++) {
       List<ShootRecord> relatedRecords = _shootController.shootRounds[i].relatedRecord.toList();
       relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);

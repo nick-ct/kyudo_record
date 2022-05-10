@@ -8,7 +8,6 @@ import 'package:kyudo_record/models/shoot_round.dart';
 class ShootController extends GetxController {
   final DatabaseController _databaseController = Get.find();
   Rx<DateTime> currDate = DateTime.now().obs;
-  Rx<bool> loading = false.obs;
 
   late ShootHistory? shootHistory;
   RxList<ShootRound> shootRounds = <ShootRound>[].obs;
@@ -24,10 +23,10 @@ class ShootController extends GetxController {
   Future<void> updateDate(DateTime newDateTime) async {
     currDate.value = newDateTime;
     await loadHistory();
+    update();
   }
 
   Future<void> loadHistory() async {
-    loading.value = true;
     shootHistory = null;
     shootRounds.clear();
 
@@ -54,7 +53,6 @@ class ShootController extends GetxController {
         ..totalHitTarget = 0;
       newShootRound();
     }
-    loading.value = false;
   }
 
   void newShootRound() {
