@@ -21,7 +21,14 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
   @override
   void initState() {
     super.initState();
+    print('init');
     _shootController.init();
+  }
+
+  @override
+  void dispose() {
+    print('dis');
+    super.dispose();
   }
 
   @override
@@ -82,27 +89,27 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
           },
         ),
         bottomNavigationBar: Obx(
-          () => BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
+          () => NavigationBar(
+            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+            selectedIndex: _selectedIndex.value,
+            onDestinationSelected: (index) {
+              _selectedIndex.value = index;
+              _shootController.update();
+            },
+            destinations: const [
+              NavigationDestination(
                 icon: FaIcon(FontAwesomeIcons.bullseye),
                 label: 'Mato',
               ),
-              BottomNavigationBarItem(
+              NavigationDestination(
                 icon: FaIcon(FontAwesomeIcons.listUl),
                 label: 'List',
               ),
-              BottomNavigationBarItem(
+              NavigationDestination(
                 icon: Icon(Icons.summarize),
                 label: 'Summary',
               ),
             ],
-            currentIndex: _selectedIndex.value,
-            selectedItemColor: Colors.blue,
-            onTap: (index) {
-              _selectedIndex.value = index;
-              _shootController.update();
-            },
           ),
         ),
       ),
