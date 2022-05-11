@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 class DatabaseController extends GetxController {
   late Isar isar;
 
-  init() async {
+  Future<void> init() async {
     final dir = await getApplicationSupportDirectory();
     isar = await Isar.open(
       schemas: [ShootRecordSchema, ShootRoundSchema, ShootHistorySchema],

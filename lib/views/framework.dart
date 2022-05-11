@@ -20,6 +20,11 @@ class _FrameworkState extends State<Framework> {
       'icon': const FaIcon(FontAwesomeIcons.bullseye),
       'pagename': '/shootRecordPage',
     },
+    {
+      'title': 'Calendar',
+      'icon': const FaIcon(FontAwesomeIcons.calendar),
+      'pagename': '/calendarPage',
+    },
   ];
 
   @override

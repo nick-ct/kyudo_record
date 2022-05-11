@@ -15,19 +15,12 @@ class ShootRecordPage extends StatefulWidget {
 }
 
 class _ShootRecordPageState extends State<ShootRecordPage> {
-  final ShootController _shootController = Get.put(ShootController());
+  final ShootController _shootController = Get.find();
   final Rx<int> _selectedIndex = 0.obs;
 
   @override
-  void initState() {
-    super.initState();
-    print('init');
-    _shootController.init();
-  }
-
-  @override
   void dispose() {
-    print('dis');
+    _shootController.updateDate(DateTime.now());
     super.dispose();
   }
 
