@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.kyudo_record">
+    package="com.code4FoodHK.kyudoRecord">
    <application
         android:label="kyudo_record"
         android:name="${applicationName}"
