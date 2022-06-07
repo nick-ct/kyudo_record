@@ -41,7 +41,7 @@ class _FrameworkState extends State<Framework> {
                   children: const [
                     Align(
                       alignment: Alignment.topRight,
-                      child: Text('Drawer Header'),
+                      child: Text(''),
                     ),
                   ],
                 )),
