@@ -102,11 +102,23 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     super.initState();
 
-    _databaseController.loadCalenderData(jsonDecode(testjsonstr));
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      setState(() {});
+    _databaseController.getAllCalenderData().then((value) {
+      if (value != null && mounted) {
+        setState(() {
+          regularCalendarData.addAll(value.where((element) => element.repeat).toList());
+          eventCalendarData.addAll(value.where((element) => !element.repeat).toList());
+        });
+      }
     });
+  }
+
+  List<CalendarData> getCalenderDataByDate(DateTime dateTime) {
+    final List<CalendarData> result = [];
+    result.addAll(regularCalendarData.where((element) => element.dayOfWeek == dateTime.weekday));
+    result.addAll(eventCalendarData.where((element) =>
+        element.eventDate ==
+        '${dateTime.year.toString()}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}'));
+    return result;
   }
 
   @override
@@ -137,25 +149,14 @@ class _CalendarPageState extends State<CalendarPage> {
                   _focusedDay = focusedDay;
                 });
               },
-              eventLoader: (day) {
-                var eventList = [];
-                _databaseController.getAllCalenderDataByDate(day);
-                if (day.isAtSameMomentAs(DateTime(2022, 06, 20))) {
-                  eventList.add(const Event('event'));
-                }
-                if (day.weekday == DateTime.monday) {
-                  eventList.add(const Event('Cyclic event'));
-                }
-
-                return eventList;
-              },
+              eventLoader: (day) => getCalenderDataByDate(day),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: 10,
+                itemCount: getCalenderDataByDate(_selectedDay!).length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    child: Text('2'),
+                  return Card(
+                    child: Text(getCalenderDataByDate(_selectedDay!)[index].title),
                   );
                 },
               ),

@@ -83,14 +83,10 @@ class DatabaseController extends GetxController {
     return recId;
   }
 
-  Future<List<CalendarData>?> getAllCalenderDataByDate(DateTime date) async {
+  Future<List<CalendarData>?> getAllCalenderData() async {
     final List<CalendarData> result = [];
-    result.addAll(await isar.calendarDatas
-        .where()
-        .eventDateEqualTo(
-            '${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}')
-        .findAll());
-    result.addAll(await isar.calendarDatas.where().dayOfWeekEqualTo(date.weekday).findAll());
+    result.addAll(await isar.calendarDatas.where().anyId().findAll());
+
     return result;
   }
 
