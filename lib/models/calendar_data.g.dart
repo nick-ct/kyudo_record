@@ -15,7 +15,7 @@ extension GetCalendarDataCollection on Isar {
 const CalendarDataSchema = CollectionSchema(
   name: 'CalendarData',
   schema:
-      '{"name":"CalendarData","idName":"id","properties":[{"name":"dayOfWeek","type":"Long"},{"name":"endTime","type":"String"},{"name":"eventDate","type":"String"},{"name":"location","type":"String"},{"name":"refId","type":"String"},{"name":"remark","type":"String"},{"name":"repeat","type":"Bool"},{"name":"startTime","type":"String"},{"name":"title","type":"String"}],"indexes":[{"name":"dayOfWeek","unique":false,"properties":[{"name":"dayOfWeek","type":"Value","caseSensitive":false}]},{"name":"eventDate","unique":false,"properties":[{"name":"eventDate","type":"Hash","caseSensitive":true}]},{"name":"refId","unique":false,"properties":[{"name":"refId","type":"Hash","caseSensitive":true}]}],"links":[]}',
+      '{"name":"CalendarData","idName":"id","properties":[{"name":"dayOfWeek","type":"Long"},{"name":"endTime","type":"String"},{"name":"eventDate","type":"String"},{"name":"location","type":"String"},{"name":"refId","type":"String"},{"name":"remark","type":"String"},{"name":"repeat","type":"Bool"},{"name":"startTime","type":"String"},{"name":"title","type":"String"}],"indexes":[],"links":[]}',
   idName: 'id',
   propertyIds: {
     'dayOfWeek': 0,
@@ -29,18 +29,8 @@ const CalendarDataSchema = CollectionSchema(
     'title': 8
   },
   listProperties: {},
-  indexIds: {'dayOfWeek': 0, 'eventDate': 1, 'refId': 2},
-  indexValueTypes: {
-    'dayOfWeek': [
-      IndexValueType.long,
-    ],
-    'eventDate': [
-      IndexValueType.stringHash,
-    ],
-    'refId': [
-      IndexValueType.stringHash,
-    ]
-  },
+  indexIds: {},
+  indexValueTypes: {},
   linkIds: {},
   backlinkLinkNames: {},
   getId: _calendarDataGetId,
@@ -239,21 +229,6 @@ extension CalendarDataQueryWhereSort
   QueryBuilder<CalendarData, CalendarData, QAfterWhere> anyId() {
     return addWhereClauseInternal(const IdWhereClause.any());
   }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhere> anyDayOfWeek() {
-    return addWhereClauseInternal(
-        const IndexWhereClause.any(indexName: 'dayOfWeek'));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhere> anyEventDate() {
-    return addWhereClauseInternal(
-        const IndexWhereClause.any(indexName: 'eventDate'));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhere> anyRefId() {
-    return addWhereClauseInternal(
-        const IndexWhereClause.any(indexName: 'refId'));
-  }
 }
 
 extension CalendarDataQueryWhere
@@ -312,143 +287,6 @@ extension CalendarDataQueryWhere
       upper: upperId,
       includeUpper: includeUpper,
     ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause> dayOfWeekEqualTo(
-      int dayOfWeek) {
-    return addWhereClauseInternal(IndexWhereClause.equalTo(
-      indexName: 'dayOfWeek',
-      value: [dayOfWeek],
-    ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause>
-      dayOfWeekNotEqualTo(int dayOfWeek) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'dayOfWeek',
-        upper: [dayOfWeek],
-        includeUpper: false,
-      )).addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'dayOfWeek',
-        lower: [dayOfWeek],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'dayOfWeek',
-        lower: [dayOfWeek],
-        includeLower: false,
-      )).addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'dayOfWeek',
-        upper: [dayOfWeek],
-        includeUpper: false,
-      ));
-    }
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause>
-      dayOfWeekGreaterThan(
-    int dayOfWeek, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(IndexWhereClause.greaterThan(
-      indexName: 'dayOfWeek',
-      lower: [dayOfWeek],
-      includeLower: include,
-    ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause> dayOfWeekLessThan(
-    int dayOfWeek, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(IndexWhereClause.lessThan(
-      indexName: 'dayOfWeek',
-      upper: [dayOfWeek],
-      includeUpper: include,
-    ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause> dayOfWeekBetween(
-    int lowerDayOfWeek,
-    int upperDayOfWeek, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addWhereClauseInternal(IndexWhereClause.between(
-      indexName: 'dayOfWeek',
-      lower: [lowerDayOfWeek],
-      includeLower: includeLower,
-      upper: [upperDayOfWeek],
-      includeUpper: includeUpper,
-    ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause> eventDateEqualTo(
-      String eventDate) {
-    return addWhereClauseInternal(IndexWhereClause.equalTo(
-      indexName: 'eventDate',
-      value: [eventDate],
-    ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause>
-      eventDateNotEqualTo(String eventDate) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'eventDate',
-        upper: [eventDate],
-        includeUpper: false,
-      )).addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'eventDate',
-        lower: [eventDate],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'eventDate',
-        lower: [eventDate],
-        includeLower: false,
-      )).addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'eventDate',
-        upper: [eventDate],
-        includeUpper: false,
-      ));
-    }
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause> refIdEqualTo(
-      String refId) {
-    return addWhereClauseInternal(IndexWhereClause.equalTo(
-      indexName: 'refId',
-      value: [refId],
-    ));
-  }
-
-  QueryBuilder<CalendarData, CalendarData, QAfterWhereClause> refIdNotEqualTo(
-      String refId) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'refId',
-        upper: [refId],
-        includeUpper: false,
-      )).addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'refId',
-        lower: [refId],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'refId',
-        lower: [refId],
-        includeLower: false,
-      )).addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'refId',
-        upper: [refId],
-        includeUpper: false,
-      ));
-    }
   }
 }
 

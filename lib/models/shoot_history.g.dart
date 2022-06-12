@@ -15,7 +15,7 @@ extension GetShootHistoryCollection on Isar {
 const ShootHistorySchema = CollectionSchema(
   name: 'ShootHistory',
   schema:
-      '{"name":"ShootHistory","idName":"id","properties":[{"name":"date","type":"String"},{"name":"totalHitTarget","type":"Long"},{"name":"totalRound","type":"Long"},{"name":"totalShoot","type":"Long"}],"indexes":[{"name":"date","unique":false,"properties":[{"name":"date","type":"Hash","caseSensitive":true}]}],"links":[{"name":"relatedRound","target":"ShootRound"}]}',
+      '{"name":"ShootHistory","idName":"id","properties":[{"name":"date","type":"String"},{"name":"totalHitTarget","type":"Long"},{"name":"totalRound","type":"Long"},{"name":"totalShoot","type":"Long"}],"indexes":[],"links":[{"name":"relatedRound","target":"ShootRound"}]}',
   idName: 'id',
   propertyIds: {
     'date': 0,
@@ -24,12 +24,8 @@ const ShootHistorySchema = CollectionSchema(
     'totalShoot': 3
   },
   listProperties: {},
-  indexIds: {'date': 0},
-  indexValueTypes: {
-    'date': [
-      IndexValueType.stringHash,
-    ]
-  },
+  indexIds: {},
+  indexValueTypes: {},
   linkIds: {'relatedRound': 0},
   backlinkLinkNames: {},
   getId: _shootHistoryGetId,
@@ -180,11 +176,6 @@ extension ShootHistoryQueryWhereSort
   QueryBuilder<ShootHistory, ShootHistory, QAfterWhere> anyId() {
     return addWhereClauseInternal(const IdWhereClause.any());
   }
-
-  QueryBuilder<ShootHistory, ShootHistory, QAfterWhere> anyDate() {
-    return addWhereClauseInternal(
-        const IndexWhereClause.any(indexName: 'date'));
-  }
 }
 
 extension ShootHistoryQueryWhere
@@ -243,39 +234,6 @@ extension ShootHistoryQueryWhere
       upper: upperId,
       includeUpper: includeUpper,
     ));
-  }
-
-  QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> dateEqualTo(
-      String date) {
-    return addWhereClauseInternal(IndexWhereClause.equalTo(
-      indexName: 'date',
-      value: [date],
-    ));
-  }
-
-  QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> dateNotEqualTo(
-      String date) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'date',
-        upper: [date],
-        includeUpper: false,
-      )).addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'date',
-        lower: [date],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'date',
-        lower: [date],
-        includeLower: false,
-      )).addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'date',
-        upper: [date],
-        includeUpper: false,
-      ));
-    }
   }
 }
 

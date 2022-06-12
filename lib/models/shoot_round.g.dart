@@ -15,16 +15,12 @@ extension GetShootRoundCollection on Isar {
 const ShootRoundSchema = CollectionSchema(
   name: 'ShootRound',
   schema:
-      '{"name":"ShootRound","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"hitCount","type":"Long"},{"name":"matoSize","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[{"name":"dateTime","unique":false,"properties":[{"name":"dateTime","type":"Value","caseSensitive":false}]}],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
+      '{"name":"ShootRound","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"hitCount","type":"Long"},{"name":"matoSize","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
   idName: 'id',
   propertyIds: {'dateTime': 0, 'hitCount': 1, 'matoSize': 2, 'shootCount': 3},
   listProperties: {},
-  indexIds: {'dateTime': 0},
-  indexValueTypes: {
-    'dateTime': [
-      IndexValueType.long,
-    ]
-  },
+  indexIds: {},
+  indexValueTypes: {},
   linkIds: {'relatedRecord': 0, 'history': 1},
   backlinkLinkNames: {'history': 'relatedRound'},
   getId: _shootRoundGetId,
@@ -183,11 +179,6 @@ extension ShootRoundQueryWhereSort
   QueryBuilder<ShootRound, ShootRound, QAfterWhere> anyId() {
     return addWhereClauseInternal(const IdWhereClause.any());
   }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterWhere> anyDateTime() {
-    return addWhereClauseInternal(
-        const IndexWhereClause.any(indexName: 'dateTime'));
-  }
 }
 
 extension ShootRoundQueryWhere
@@ -241,76 +232,6 @@ extension ShootRoundQueryWhere
       lower: lowerId,
       includeLower: includeLower,
       upper: upperId,
-      includeUpper: includeUpper,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeEqualTo(
-      DateTime dateTime) {
-    return addWhereClauseInternal(IndexWhereClause.equalTo(
-      indexName: 'dateTime',
-      value: [dateTime],
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeNotEqualTo(
-      DateTime dateTime) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'dateTime',
-        upper: [dateTime],
-        includeUpper: false,
-      )).addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'dateTime',
-        lower: [dateTime],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(IndexWhereClause.greaterThan(
-        indexName: 'dateTime',
-        lower: [dateTime],
-        includeLower: false,
-      )).addWhereClauseInternal(IndexWhereClause.lessThan(
-        indexName: 'dateTime',
-        upper: [dateTime],
-        includeUpper: false,
-      ));
-    }
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeGreaterThan(
-    DateTime dateTime, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(IndexWhereClause.greaterThan(
-      indexName: 'dateTime',
-      lower: [dateTime],
-      includeLower: include,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeLessThan(
-    DateTime dateTime, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(IndexWhereClause.lessThan(
-      indexName: 'dateTime',
-      upper: [dateTime],
-      includeUpper: include,
-    ));
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> dateTimeBetween(
-    DateTime lowerDateTime,
-    DateTime upperDateTime, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addWhereClauseInternal(IndexWhereClause.between(
-      indexName: 'dateTime',
-      lower: [lowerDateTime],
-      includeLower: includeLower,
-      upper: [upperDateTime],
       includeUpper: includeUpper,
     ));
   }

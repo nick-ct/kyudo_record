@@ -67,8 +67,13 @@ class DatabaseController extends GetxController {
   }
 
   Future<ShootHistory?> getShootHistoryByDate(String date) async {
-    final result = await isar.shootHistorys.where().dateEqualTo(date).findAll();
+    final result = await isar.shootHistorys.filter().dateEqualTo(date).findAll();
     return result.isEmpty ? null : result.first;
+  }
+
+  Future<List<ShootHistory>> getShootHistoryByMonth(String month) async {
+    final result = await isar.shootHistorys.filter().dateStartsWith(month).findAll();
+    return result.isEmpty ? [] : result;
   }
 
   Future<int?> addCalenderData(CalendarData data) async {

@@ -7,7 +7,6 @@ part 'shoot_history.g.dart';
 class ShootHistory {
   @Id()
   int id = Isar.autoIncrement;
-  @Index()
   late String date;
   late int totalRound;
   late int totalShoot;
