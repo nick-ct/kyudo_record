@@ -348,7 +348,6 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
               ],
             ),
           ),
-          // const Divider(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
