@@ -83,6 +83,7 @@ class _ShootRecordPageState extends State<ShootRecordPage> {
         ),
         bottomNavigationBar: Obx(
           () => NavigationBar(
+            height: 64,
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: _selectedIndex.value,
             onDestinationSelected: (index) {

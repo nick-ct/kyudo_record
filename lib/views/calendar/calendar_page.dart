@@ -72,9 +72,9 @@ class _CalendarPageState extends State<CalendarPage> {
         body: Column(
           children: [
             TableCalendar(
+              headerStyle: const HeaderStyle(titleCentered: true),
               focusedDay: _focusedDay,
               daysOfWeekHeight: 24,
-              headerVisible: true,
               availableCalendarFormats: const {CalendarFormat.month: 'Month'},
               firstDay: DateTime.utc(2020, 1),
               lastDay: DateTime.utc(2100, 1),
@@ -82,10 +82,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 defaultBuilder: (context, day, focusedDay) {
                   return Container(
                     color: Colors.red.withOpacity(_currMonthShootHistory
-                            .firstWhere(
-                                (element) =>
-                                    element.date ==
-                                    '${day.year.toString()}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}',
+                            .firstWhere((element) => element.date == DateFormat('y-MM-dd').format(day),
                                 orElse: () => ShootHistory()..totalShoot = 0)
                             .totalShoot /
                         (maxShootCount == 0 ? 1 : maxShootCount)),
@@ -97,10 +94,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 todayBuilder: (context, day, focusedDay) {
                   return Container(
                     color: Colors.red.withOpacity(_currMonthShootHistory
-                            .firstWhere(
-                                (element) =>
-                                    element.date ==
-                                    '${day.year.toString()}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}',
+                            .firstWhere((element) => element.date == DateFormat('y-MM-dd').format(day),
                                 orElse: () => ShootHistory()..totalShoot = 0)
                             .totalShoot /
                         (maxShootCount == 0 ? 1 : maxShootCount)),
@@ -112,10 +106,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 selectedBuilder: (context, day, focusedDay) {
                   return Container(
                     color: Colors.red.withOpacity(_currMonthShootHistory
-                            .firstWhere(
-                                (element) =>
-                                    element.date ==
-                                    '${day.year.toString()}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}',
+                            .firstWhere((element) => element.date == DateFormat('y-MM-dd').format(day),
                                 orElse: () => ShootHistory()..totalShoot = 0)
                             .totalShoot /
                         (maxShootCount == 0 ? 1 : maxShootCount)),
@@ -186,26 +177,18 @@ class _CalendarPageState extends State<CalendarPage> {
                     Obx(() {
                       switch (_selectedIndex.value) {
                         case 0:
-                          return Column(
-                            children: [
-                              Text(
-                                DateFormat('y-M-d EEE').format(_selectedDay),
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: _selectedDayEventData.length,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    child: ListTile(
-                                      title: Text(_selectedDayEventData[index].title),
-                                      subtitle: Text(
-                                          '${_selectedDayEventData[index].startTime}-${_selectedDayEventData[index].endTime}'),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _selectedDayEventData.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(_selectedDayEventData[index].title),
+                                  subtitle: Text(DateFormat('y-MM-dd (EEE)').format(_selectedDay) +
+                                      ' ${_selectedDayEventData[index].startTime}-${_selectedDayEventData[index].endTime}'),
+                                ),
+                              );
+                            },
                           );
                         case 1:
                           return Column(
@@ -228,6 +211,7 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
         bottomNavigationBar: Obx(
           () => NavigationBar(
+            height: 64,
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: _selectedIndex.value,
             onDestinationSelected: (index) {
