@@ -143,6 +143,30 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                         ),
                       ),
                     ),
+                    const Divider(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      width: Get.width,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Total Hit Count'),
+                              _shootController.shootHistory!.totalShoot > 0
+                                  ? Text(
+                                      '${_shootController.shootHistory?.totalHitTarget} / ${_shootController.shootHistory?.totalShoot} (' +
+                                          (_shootController.shootHistory!.totalHitTarget /
+                                                  _shootController.shootHistory!.totalShoot *
+                                                  100)
+                                              .toStringAsFixed(2) +
+                                          ' %)')
+                                  : const Text('0 / 0 (0.00 %)'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
     );
