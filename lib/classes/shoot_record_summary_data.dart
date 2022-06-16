@@ -6,9 +6,18 @@ import 'package:flutter_heat_map/flutter_heat_map.dart';
 import 'package:get/get.dart';
 import 'package:kyudo_record/classes/mato_widget.dart';
 import 'package:kyudo_record/models/shoot_record.dart';
+import 'package:kyudo_record/models/shoot_round.dart';
 
 class ShootRecordSummaryData {
   Mato mato = Mato();
+
+  List<ShootRound> roundList = [];
+
+  List<ShootRecord> firstShoot = [];
+  List<ShootRecord> secondShoot = [];
+  List<ShootRecord> thirdShoot = [];
+  List<ShootRecord> fourthShoot = [];
+
   RxList<ShootRecord> displayRecords = <ShootRecord>[].obs;
   Uint8List? heatmapBytes;
   int heatmapWidth = 350;
