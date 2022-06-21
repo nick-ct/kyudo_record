@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kyudo_record/controller/database_controller.dart';
 import 'package:kyudo_record/controller/shoot_controller.dart';
 import 'package:kyudo_record/views/calendar/calendar_page.dart';
+import 'package:kyudo_record/views/setting/setting_page.dart';
 import 'package:kyudo_record/views/shoot_record/shoot_record_page.dart';
 
 Future<void> main() async {
@@ -29,18 +30,24 @@ class App extends StatelessWidget {
             color: Colors.blue[350],
           )),
       debugShowCheckedModeBanner: true,
-      initialRoute: '/shootRecordPage',
+      initialRoute: '/calendarPage',
       onGenerateRoute: (settings) {
         switch (settings.name) {
+          case '/calendarPage':
+            return GetPageRoute(
+              page: () => const CalendarPage(),
+              settings: settings,
+              transition: Transition.fadeIn,
+            );
           case '/shootRecordPage':
             return GetPageRoute(
               page: () => const ShootRecordPage(),
               settings: settings,
               transition: Transition.fadeIn,
             );
-          case '/calendarPage':
+          case '/settingPage':
             return GetPageRoute(
-              page: () => const CalendarPage(),
+              page: () => const SettingPage(),
               settings: settings,
               transition: Transition.fadeIn,
             );

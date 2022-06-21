@@ -235,7 +235,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         Expanded(child: Center(child: Text(maxShootCount.toString()))),
                       ],
                     ),
-                    const Center(child: Text('射箭數')),
+                    const Center(child: Text('Total Shoot')),
                     const Divider(),
                     Obx(() {
                       switch (_selectedIndex.value) {
@@ -245,12 +245,15 @@ class _CalendarPageState extends State<CalendarPage> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Lottie.asset(
-                                        'assets/lottie/empty-box.json',
-                                        width: 200,
-                                        height: 200,
-                                        fit: BoxFit.scaleDown,
-                                        repeat: false,
+                                      Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Lottie.asset(
+                                          'assets/lottie/calendar-event.json',
+                                          width: 180,
+                                          height: 180,
+                                          fit: BoxFit.scaleDown,
+                                          repeat: false,
+                                        ),
                                       ),
                                       const Text('No Schedule'),
                                     ],
@@ -292,238 +295,242 @@ class _CalendarPageState extends State<CalendarPage> {
                                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                 width: Get.width,
                                 child: summaryData.isEmpty
-                                    ? Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('Total Hit Count'),
-                                              Text('0 / 0 (0.0 %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('Hit In 1st Shoot'),
-                                              Text('0 / 0 (0.0 %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('Hit In 2nd Shoot'),
-                                              Text('0 / 0 (0.0 %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('Hit In 3rd Shoot'),
-                                              Text('0 / 0 (0.0 %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('Hit In 4th Shoot'),
-                                              Text('0 / 0 (0.0 %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('All Miss Shoot Round'),
-                                              Text('0'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('1 Hit Shoot Round'),
-                                              Text('0'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('2 Hit Shoot Round'),
-                                              Text('0'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('3 Hit Shoot Round'),
-                                              Text('0'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: const [
-                                              Text('All Hit Shoot Round'),
-                                              Text('0'),
-                                            ],
-                                          ),
-                                        ],
+                                    ? SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('Total Hit Count'),
+                                                Text('0 / 0 (0.0 %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('Hit In 1st Shoot'),
+                                                Text('0 / 0 (0.0 %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('Hit In 2nd Shoot'),
+                                                Text('0 / 0 (0.0 %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('Hit In 3rd Shoot'),
+                                                Text('0 / 0 (0.0 %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('Hit In 4th Shoot'),
+                                                Text('0 / 0 (0.0 %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('All Miss Shoot Round'),
+                                                Text('0'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('1 Hit Shoot Round'),
+                                                Text('0'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('2 Hit Shoot Round'),
+                                                Text('0'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('3 Hit Shoot Round'),
+                                                Text('0'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: const [
+                                                Text('All Hit Shoot Round'),
+                                                Text('0'),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       )
-                                    : Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('Total Hit Count'),
-                                              totalShoot == 0
-                                                  ? const Text('0 / 0 (0.0 %)')
-                                                  : Text('$totalHit / $totalShoot (' +
-                                                      (totalHit / totalShoot * 100).toStringAsFixed(1) +
-                                                      ' %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('Hit In 1st Shoot'),
-                                              summaryData[_selectedMatoSize.value].firstShoot.isEmpty
-                                                  ? const Text('0 / 0 (0.0 %)')
-                                                  : Text(
-                                                      '${summaryData[_selectedMatoSize.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].firstShoot.length} (' +
-                                                          (summaryData[_selectedMatoSize.value]
-                                                                      .firstShoot
-                                                                      .where((element) => element.hitTarget)
-                                                                      .toList()
-                                                                      .length /
-                                                                  summaryData[_selectedMatoSize.value]
-                                                                      .firstShoot
-                                                                      .length *
-                                                                  100)
-                                                              .toStringAsFixed(1) +
-                                                          ' %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('Hit In 2nd Shoot'),
-                                              summaryData[_selectedMatoSize.value].secondShoot.isEmpty
-                                                  ? const Text('0 / 0 (0.0 %)')
-                                                  : Text(
-                                                      '${summaryData[_selectedMatoSize.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].secondShoot.length} (' +
-                                                          (summaryData[_selectedMatoSize.value]
-                                                                      .secondShoot
-                                                                      .where((element) => element.hitTarget)
-                                                                      .toList()
-                                                                      .length /
-                                                                  summaryData[_selectedMatoSize.value]
-                                                                      .secondShoot
-                                                                      .length *
-                                                                  100)
-                                                              .toStringAsFixed(1) +
-                                                          ' %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('Hit In 3rd Shoot'),
-                                              summaryData[_selectedMatoSize.value].thirdShoot.isEmpty
-                                                  ? const Text('0 / 0 (0.0 %)')
-                                                  : Text(
-                                                      '${summaryData[_selectedMatoSize.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].thirdShoot.length} (' +
-                                                          (summaryData[_selectedMatoSize.value]
-                                                                      .thirdShoot
-                                                                      .where((element) => element.hitTarget)
-                                                                      .toList()
-                                                                      .length /
-                                                                  summaryData[_selectedMatoSize.value]
-                                                                      .thirdShoot
-                                                                      .length *
-                                                                  100)
-                                                              .toStringAsFixed(1) +
-                                                          ' %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('Hit In 4th Shoot'),
-                                              summaryData[_selectedMatoSize.value].fourthShoot.isEmpty
-                                                  ? const Text('0 / 0 (0.0 %)')
-                                                  : Text(
-                                                      '${summaryData[_selectedMatoSize.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].fourthShoot.length} (' +
-                                                          (summaryData[_selectedMatoSize.value]
-                                                                      .fourthShoot
-                                                                      .where((element) => element.hitTarget)
-                                                                      .toList()
-                                                                      .length /
-                                                                  summaryData[_selectedMatoSize.value]
-                                                                      .fourthShoot
-                                                                      .length *
-                                                                  100)
-                                                              .toStringAsFixed(1) +
-                                                          ' %)'),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('All Miss Shoot Round'),
-                                              Text(summaryData[_selectedMatoSize.value]
-                                                  .roundList
-                                                  .where((element) => element.hitCount == 0)
-                                                  .toList()
-                                                  .length
-                                                  .toString()),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('1 Hit Shoot Round'),
-                                              Text(summaryData[_selectedMatoSize.value]
-                                                  .roundList
-                                                  .where((element) => element.hitCount == 1)
-                                                  .toList()
-                                                  .length
-                                                  .toString()),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('2 Hit Shoot Round'),
-                                              Text(summaryData[_selectedMatoSize.value]
-                                                  .roundList
-                                                  .where((element) => element.hitCount == 2)
-                                                  .toList()
-                                                  .length
-                                                  .toString()),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('3 Hit Shoot Round'),
-                                              Text(summaryData[_selectedMatoSize.value]
-                                                  .roundList
-                                                  .where((element) => element.hitCount == 3)
-                                                  .toList()
-                                                  .length
-                                                  .toString()),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text('All Hit Shoot Round'),
-                                              Text(summaryData[_selectedMatoSize.value]
-                                                  .roundList
-                                                  .where((element) => element.hitCount == 4)
-                                                  .toList()
-                                                  .length
-                                                  .toString()),
-                                            ],
-                                          ),
-                                        ],
+                                    : SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('Total Hit Count'),
+                                                totalShoot == 0
+                                                    ? const Text('0 / 0 (0.0 %)')
+                                                    : Text('$totalHit / $totalShoot (' +
+                                                        (totalHit / totalShoot * 100).toStringAsFixed(1) +
+                                                        ' %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('Hit In 1st Shoot'),
+                                                summaryData[_selectedMatoSize.value].firstShoot.isEmpty
+                                                    ? const Text('0 / 0 (0.0 %)')
+                                                    : Text(
+                                                        '${summaryData[_selectedMatoSize.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].firstShoot.length} (' +
+                                                            (summaryData[_selectedMatoSize.value]
+                                                                        .firstShoot
+                                                                        .where((element) => element.hitTarget)
+                                                                        .toList()
+                                                                        .length /
+                                                                    summaryData[_selectedMatoSize.value]
+                                                                        .firstShoot
+                                                                        .length *
+                                                                    100)
+                                                                .toStringAsFixed(1) +
+                                                            ' %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('Hit In 2nd Shoot'),
+                                                summaryData[_selectedMatoSize.value].secondShoot.isEmpty
+                                                    ? const Text('0 / 0 (0.0 %)')
+                                                    : Text(
+                                                        '${summaryData[_selectedMatoSize.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].secondShoot.length} (' +
+                                                            (summaryData[_selectedMatoSize.value]
+                                                                        .secondShoot
+                                                                        .where((element) => element.hitTarget)
+                                                                        .toList()
+                                                                        .length /
+                                                                    summaryData[_selectedMatoSize.value]
+                                                                        .secondShoot
+                                                                        .length *
+                                                                    100)
+                                                                .toStringAsFixed(1) +
+                                                            ' %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('Hit In 3rd Shoot'),
+                                                summaryData[_selectedMatoSize.value].thirdShoot.isEmpty
+                                                    ? const Text('0 / 0 (0.0 %)')
+                                                    : Text(
+                                                        '${summaryData[_selectedMatoSize.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].thirdShoot.length} (' +
+                                                            (summaryData[_selectedMatoSize.value]
+                                                                        .thirdShoot
+                                                                        .where((element) => element.hitTarget)
+                                                                        .toList()
+                                                                        .length /
+                                                                    summaryData[_selectedMatoSize.value]
+                                                                        .thirdShoot
+                                                                        .length *
+                                                                    100)
+                                                                .toStringAsFixed(1) +
+                                                            ' %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('Hit In 4th Shoot'),
+                                                summaryData[_selectedMatoSize.value].fourthShoot.isEmpty
+                                                    ? const Text('0 / 0 (0.0 %)')
+                                                    : Text(
+                                                        '${summaryData[_selectedMatoSize.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].fourthShoot.length} (' +
+                                                            (summaryData[_selectedMatoSize.value]
+                                                                        .fourthShoot
+                                                                        .where((element) => element.hitTarget)
+                                                                        .toList()
+                                                                        .length /
+                                                                    summaryData[_selectedMatoSize.value]
+                                                                        .fourthShoot
+                                                                        .length *
+                                                                    100)
+                                                                .toStringAsFixed(1) +
+                                                            ' %)'),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('All Miss Shoot Round'),
+                                                Text(summaryData[_selectedMatoSize.value]
+                                                    .roundList
+                                                    .where((element) => element.hitCount == 0)
+                                                    .toList()
+                                                    .length
+                                                    .toString()),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('1 Hit Shoot Round'),
+                                                Text(summaryData[_selectedMatoSize.value]
+                                                    .roundList
+                                                    .where((element) => element.hitCount == 1)
+                                                    .toList()
+                                                    .length
+                                                    .toString()),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('2 Hit Shoot Round'),
+                                                Text(summaryData[_selectedMatoSize.value]
+                                                    .roundList
+                                                    .where((element) => element.hitCount == 2)
+                                                    .toList()
+                                                    .length
+                                                    .toString()),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('3 Hit Shoot Round'),
+                                                Text(summaryData[_selectedMatoSize.value]
+                                                    .roundList
+                                                    .where((element) => element.hitCount == 3)
+                                                    .toList()
+                                                    .length
+                                                    .toString()),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text('All Hit Shoot Round'),
+                                                Text(summaryData[_selectedMatoSize.value]
+                                                    .roundList
+                                                    .where((element) => element.hitCount == 4)
+                                                    .toList()
+                                                    .length
+                                                    .toString()),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                               ),
                             ],

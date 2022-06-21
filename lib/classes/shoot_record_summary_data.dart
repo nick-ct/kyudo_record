@@ -29,8 +29,7 @@ class ShootRecordSummaryData {
       heatmapBytes = null;
       return;
     }
-    ImageProvider? provider =
-        AssetImage('assets/images/transparent' + heatmapWidth.toString() + 'x' + heatmapWidth.toString() + '.png');
+    ImageProvider? provider = AssetImage('assets/images/transparent' + heatmapWidth.toString() + '.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
 
     HeatMapPage heatMapPage = HeatMapPage(
