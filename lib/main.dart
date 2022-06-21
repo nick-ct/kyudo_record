@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:kyudo_record/controller/database_controller.dart';
+import 'package:kyudo_record/controller/setting_controller.dart';
 import 'package:kyudo_record/controller/shoot_controller.dart';
 import 'package:kyudo_record/views/calendar/calendar_page.dart';
 import 'package:kyudo_record/views/setting/setting_page.dart';
@@ -8,10 +10,13 @@ import 'package:kyudo_record/views/shoot_record/shoot_record_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
   final DatabaseController databaseController = Get.put(DatabaseController(), permanent: true);
   await databaseController.init();
   final ShootController shootController = Get.put(ShootController(), permanent: true);
   await shootController.init();
+  final SettingController settingController = Get.put(SettingController(), permanent: true);
+  await settingController.init();
   runApp(const App());
 }
 
