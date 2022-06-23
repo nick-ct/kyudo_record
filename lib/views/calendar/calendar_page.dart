@@ -207,96 +207,97 @@ class _CalendarPageState extends State<CalendarPage> {
               },
               eventLoader: (day) => getCalenderDataByDate(day),
             ),
+            const Divider(),
+            Row(
+              children: [
+                const Expanded(child: Center(child: Text('0'))),
+                Expanded(
+                    flex: 4,
+                    child: Container(
+                      width: Get.width,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.red.withOpacity(0),
+                          Colors.red.withOpacity(1),
+                        ],
+                      )),
+                    )),
+                Expanded(child: Center(child: Text(maxShootCount.toString()))),
+              ],
+            ),
+            const Center(child: Text('Total Shoot')),
+            const Divider(),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Divider(),
-                    Row(
-                      children: [
-                        const Expanded(child: Center(child: Text('0'))),
-                        Expanded(
-                            flex: 4,
-                            child: Container(
-                              width: Get.width,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [
-                                  Colors.red.withOpacity(0),
-                                  Colors.red.withOpacity(1),
-                                ],
-                              )),
-                            )),
-                        Expanded(child: Center(child: Text(maxShootCount.toString()))),
-                      ],
-                    ),
-                    const Center(child: Text('Total Shoot')),
-                    const Divider(),
-                    Obx(() {
-                      switch (_selectedIndex.value) {
-                        case 0:
-                          return _selectedDayEventData.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: Lottie.asset(
-                                          'assets/lottie/calendar-event.json',
-                                          width: 180,
-                                          height: 180,
-                                          fit: BoxFit.scaleDown,
-                                          repeat: false,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Obx(() {
+                        switch (_selectedIndex.value) {
+                          case 0:
+                            return _selectedDayEventData.isEmpty
+                                ? Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Lottie.asset(
+                                            'assets/lottie/calendar-event.json',
+                                            width: 180,
+                                            height: 180,
+                                            fit: BoxFit.scaleDown,
+                                            repeat: false,
+                                          ),
                                         ),
+                                        const Text('No Schedule'),
+                                      ],
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: _selectedDayEventData.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                        child: ListTile(
+                                          title: Text(_selectedDayEventData[index].title),
+                                          subtitle: Text(DateFormat('y-MM-dd (EEE)').format(_selectedDay) +
+                                              ' ${_selectedDayEventData[index].startTime}-${_selectedDayEventData[index].endTime}'),
+                                        ),
+                                      );
+                                    },
+                                  );
+                          case 1:
+                            return Column(
+                              children: [
+                                if (summaryData.isNotEmpty)
+                                  Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    width: Get.width,
+                                    child: Center(
+                                      child: ToggleSwitch(
+                                        minWidth: Get.width / labels.length,
+                                        animate: true,
+                                        animationDuration: 500,
+                                        initialLabelIndex: 0,
+                                        totalSwitches: labels.length,
+                                        labels: labels,
+                                        onToggle: (index) => _selectedMatoSize.value = index!,
                                       ),
-                                      const Text('No Schedule'),
-                                    ],
-                                  ),
-                                )
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: _selectedDayEventData.length,
-                                  itemBuilder: (context, index) {
-                                    return Card(
-                                      child: ListTile(
-                                        title: Text(_selectedDayEventData[index].title),
-                                        subtitle: Text(DateFormat('y-MM-dd (EEE)').format(_selectedDay) +
-                                            ' ${_selectedDayEventData[index].startTime}-${_selectedDayEventData[index].endTime}'),
-                                      ),
-                                    );
-                                  },
-                                );
-                        case 1:
-                          return Column(
-                            children: [
-                              if (summaryData.isNotEmpty)
-                                Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  width: Get.width,
-                                  child: Center(
-                                    child: ToggleSwitch(
-                                      minWidth: Get.width / labels.length,
-                                      animate: true,
-                                      animationDuration: 500,
-                                      initialLabelIndex: 0,
-                                      totalSwitches: labels.length,
-                                      labels: labels,
-                                      onToggle: (index) => _selectedMatoSize.value = index!,
                                     ),
                                   ),
-                                ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                width: Get.width,
-                                child: summaryData.isEmpty
-                                    ? SingleChildScrollView(
-                                        child: Column(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                  width: Get.width,
+                                  child: summaryData.isEmpty
+                                      ? Column(
                                           children: [
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -369,10 +370,8 @@ class _CalendarPageState extends State<CalendarPage> {
                                               ],
                                             ),
                                           ],
-                                        ),
-                                      )
-                                    : SingleChildScrollView(
-                                        child: Column(
+                                        )
+                                      : Column(
                                           children: [
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -531,15 +530,15 @@ class _CalendarPageState extends State<CalendarPage> {
                                             ),
                                           ],
                                         ),
-                                      ),
-                              ),
-                            ],
-                          );
-                        default:
-                          return Container();
-                      }
-                    }),
-                  ],
+                                ),
+                              ],
+                            );
+                          default:
+                            return Container();
+                        }
+                      }),
+                    ],
+                  ),
                 ),
               ),
             ),

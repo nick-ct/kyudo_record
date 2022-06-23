@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:flutter_heat_map/flutter_heat_map.dart';
+import 'package:kyudo_record/controller/setting_controller.dart';
 import 'package:kyudo_record/controller/shoot_controller.dart';
 import 'package:kyudo_record/models/shoot_record.dart';
 import 'package:kyudo_record/models/shoot_round.dart';
@@ -20,12 +21,11 @@ class ShootRecordMato extends StatefulWidget {
 }
 
 class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderStateMixin {
+  final SettingController _settingController = Get.find();
   final ShootController _shootController = Get.find();
 
   late double paintArea = Get.width * 0.95 > 500 ? 500 : Get.width * 0.95;
   late double deductPosition = paintArea / 2;
-
-  int heatmapWidth = 350;
 
   Mato mato = Mato();
   RxList<ShootRecord> displayRecords = <ShootRecord>[].obs;
@@ -120,7 +120,8 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
       heatmapBytes = null;
       return;
     }
-    ImageProvider? provider = AssetImage('assets/images/transparent' + heatmapWidth.toString() + '.png');
+    ImageProvider? provider =
+        AssetImage('assets/images/transparent' + _settingController.clusterSensitiveLevel.toStringAsFixed(0) + '.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
 
     HeatMapPage heatMapPage = HeatMapPage(
@@ -128,8 +129,10 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
       events: displayRecords
           .map((element) => HeatMapEvent(
                   location: Offset(
-                (element.hitPositionX * heatmapWidth / 2 + heatmapWidth / 2),
-                (element.hitPositionY * heatmapWidth / 2 * -1 + heatmapWidth / 2),
+                (element.hitPositionX * _settingController.clusterSensitiveLevel / 2 +
+                    _settingController.clusterSensitiveLevel / 2),
+                (element.hitPositionY * _settingController.clusterSensitiveLevel / 2 * -1 +
+                    _settingController.clusterSensitiveLevel / 2),
               )))
           .toList(),
     );

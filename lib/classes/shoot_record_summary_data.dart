@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heat_map/flutter_heat_map.dart';
 import 'package:get/get.dart';
 import 'package:kyudo_record/classes/mato_widget.dart';
+import 'package:kyudo_record/controller/setting_controller.dart';
 import 'package:kyudo_record/models/shoot_record.dart';
 import 'package:kyudo_record/models/shoot_round.dart';
 
 class ShootRecordSummaryData {
+  final SettingController _settingController = Get.find();
   Mato mato = Mato();
 
   List<ShootRound> roundList = [];
@@ -20,7 +22,6 @@ class ShootRecordSummaryData {
 
   RxList<ShootRecord> displayRecords = <ShootRecord>[].obs;
   Uint8List? heatmapBytes;
-  int heatmapWidth = 350;
 
   void setMatoSize(MatoSize matoSize) => mato.updateMatoSize(matoSize);
 
@@ -29,7 +30,8 @@ class ShootRecordSummaryData {
       heatmapBytes = null;
       return;
     }
-    ImageProvider? provider = AssetImage('assets/images/transparent' + heatmapWidth.toString() + '.png');
+    ImageProvider? provider =
+        AssetImage('assets/images/transparent' + _settingController.clusterSensitiveLevel.toStringAsFixed(0) + '.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
 
     HeatMapPage heatMapPage = HeatMapPage(
@@ -37,8 +39,10 @@ class ShootRecordSummaryData {
       events: displayRecords
           .map((element) => HeatMapEvent(
                   location: Offset(
-                (element.hitPositionX * heatmapWidth / 2 + heatmapWidth / 2),
-                (element.hitPositionY * heatmapWidth / 2 * -1 + heatmapWidth / 2),
+                (element.hitPositionX * _settingController.clusterSensitiveLevel / 2 +
+                    _settingController.clusterSensitiveLevel / 2),
+                (element.hitPositionY * _settingController.clusterSensitiveLevel / 2 * -1 +
+                    _settingController.clusterSensitiveLevel / 2),
               )))
           .toList(),
     );
