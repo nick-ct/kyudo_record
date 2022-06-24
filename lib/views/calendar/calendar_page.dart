@@ -278,14 +278,16 @@ class _CalendarPageState extends State<CalendarPage> {
                                     padding: const EdgeInsets.all(8.0),
                                     width: Get.width,
                                     child: Center(
-                                      child: ToggleSwitch(
-                                        minWidth: Get.width / labels.length,
-                                        animate: true,
-                                        animationDuration: 500,
-                                        initialLabelIndex: 0,
-                                        totalSwitches: labels.length,
-                                        labels: labels,
-                                        onToggle: (index) => _selectedMatoSize.value = index!,
+                                      child: Obx(
+                                        () => ToggleSwitch(
+                                          minWidth: Get.width / labels.length,
+                                          animate: true,
+                                          animationDuration: 500,
+                                          initialLabelIndex: 0,
+                                          totalSwitches: labels.length,
+                                          labels: labels,
+                                          onToggle: (index) => _selectedMatoSize.value = index!,
+                                        ),
                                       ),
                                     ),
                                   ),
