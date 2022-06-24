@@ -42,18 +42,14 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     super.initState();
 
-    _databaseController.getAllCalenderData().then((value) {
+    _databaseController.getAllCalenderData().then((value) async {
       if (value != null && mounted) {
         _regularCalendarData.addAll(value.where((element) => element.repeat).toList());
         _eventCalendarData.addAll(value.where((element) => !element.repeat).toList());
         _selectedDayEventData = getCalenderDataByDate(_selectedDay);
+        await getShootHistory(_selectedDay);
+        setState(() {});
       }
-    });
-
-    getShootHistory(_selectedDay);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
     });
   }
 
