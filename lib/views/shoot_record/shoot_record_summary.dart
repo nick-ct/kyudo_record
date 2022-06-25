@@ -100,8 +100,6 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                       child: Center(
                         child: ToggleSwitch(
                           minWidth: Get.width / labels.length,
-                          animate: true,
-                          animationDuration: 500,
                           initialLabelIndex: 0,
                           totalSwitches: labels.length,
                           labels: labels,
