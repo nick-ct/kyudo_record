@@ -4,7 +4,7 @@ import 'package:kyudo_record/classes/mato_widget.dart';
 import 'package:kyudo_record/classes/shoot_record_summary_data.dart';
 import 'package:kyudo_record/controller/shoot_controller.dart';
 import 'package:kyudo_record/models/shoot_record.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+// import 'package:toggle_switch/toggle_switch.dart';
 import 'package:lottie/lottie.dart';
 
 class ShootRecordSummary extends StatefulWidget {
@@ -19,10 +19,8 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
   late double deductPosition = paintArea / 2;
 
   final Rx<bool> loading = false.obs;
-  List<String> labels = [];
   List<ShootRecordSummaryData> summaryData = [];
   final Rx<int> _selectedIndex = 0.obs;
-  final List<String> availableLabels = ['17M', '28M', '60M'];
 
   @override
   Future<void> didChangeDependencies() async {
@@ -31,7 +29,6 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
 
     for (int i = 0; i < MatoSize.values.length; i++) {
       if (_shootController.shootRounds.where((p0) => p0.matoSize == i).toList().isNotEmpty) {
-        labels.add(availableLabels[i]);
         ShootRecordSummaryData newSummaryData = ShootRecordSummaryData();
         newSummaryData.roundList = _shootController.shootRounds.where((p0) => p0.matoSize == i).toList();
         newSummaryData.setMatoSize(MatoSize.values[i]);
@@ -94,19 +91,19 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                 )
               : Column(
                   children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.all(8.0),
-                      width: Get.width,
-                      child: Center(
-                        child: ToggleSwitch(
-                          minWidth: Get.width / labels.length,
-                          initialLabelIndex: 0,
-                          totalSwitches: labels.length,
-                          labels: labels,
-                          onToggle: (index) => _selectedIndex.value = index!,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   width: Get.width,
+                    //   child: Center(
+                    //     child: ToggleSwitch(
+                    //       minWidth: Get.width / labels.length,
+                    //       initialLabelIndex: 0,
+                    //       totalSwitches: labels.length,
+                    //       labels: labels,
+                    //       onToggle: (index) => _selectedIndex.value = index!,
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       height: paintArea,
                       width: paintArea,

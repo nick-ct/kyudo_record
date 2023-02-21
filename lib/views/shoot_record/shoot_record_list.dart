@@ -33,7 +33,6 @@ class _ShootRecordListState extends State<ShootRecordList> with TickerProviderSt
         itemCount: _shootController.shootRounds.length,
         separatorBuilder: (context, index) => const SizedBox(height: 8),
         itemBuilder: (context, index) {
-          MatoSize matoSize = MatoSize.values[_shootController.shootRounds[index].matoSize];
           List<ShootRecord> relatedRecords = _shootController.shootRounds[index].relatedRecord.toList();
           relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
           return Card(
@@ -47,52 +46,6 @@ class _ShootRecordListState extends State<ShootRecordList> with TickerProviderSt
                       motion: const DrawerMotion(),
                       extentRatio: 0.4,
                       children: [
-                        Expanded(
-                          child: Builder(
-                            builder: (ctx) => PopupMenuButton<MatoSize>(
-                              offset: const Offset(30, 30),
-                              child: Container(
-                                color: Colors.yellow[900],
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(
-                                        Icons.edit,
-                                        size: 20,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        'Edit',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              onSelected: (matoSize) async {
-                                await updateMatoSize(matoSize, _shootController.shootRounds[index]);
-                                Slidable.of(ctx)?.close();
-                              },
-                              itemBuilder: (BuildContext context) {
-                                return [
-                                  CheckedPopupMenuItem(
-                                    checked: matoSize == MatoSize.metre17,
-                                    child: const Text('17M'),
-                                    value: MatoSize.metre17,
-                                  ),
-                                  CheckedPopupMenuItem(
-                                    checked: matoSize == MatoSize.metre28,
-                                    child: const Text('28M'),
-                                    value: MatoSize.metre28,
-                                  ),
-                                ];
-                              },
-                            ),
-                          ),
-                        ),
                         Expanded(
                           child: Builder(
                             builder: (ctx) => InkWell(
@@ -141,11 +94,6 @@ class _ShootRecordListState extends State<ShootRecordList> with TickerProviderSt
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text('Round ' + (index + 1).toString()),
-                                  Text(matoSize == MatoSize.metre17
-                                      ? '17M'
-                                      : matoSize == MatoSize.metre28
-                                          ? '28M'
-                                          : ''),
                                   Text('Hit Rate ' +
                                       (_shootController.shootRounds[index].shootCount > 0
                                           ? ((_shootController.shootRounds[index].hitCount /

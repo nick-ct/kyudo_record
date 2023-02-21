@@ -261,28 +261,8 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                PopupMenuButton<MatoSize>(
-                  offset: const Offset(30, 30),
-                  icon: const FaIcon(FontAwesomeIcons.bullseye),
-                  iconSize: 40,
-                  onSelected: (matoSize) => updateMatoSize(matoSize, _shootController.shootRounds.last),
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      CheckedPopupMenuItem(
-                        checked: mato.matoSize == MatoSize.metre17,
-                        child: const Text('17M'),
-                        value: MatoSize.metre17,
-                      ),
-                      CheckedPopupMenuItem(
-                        checked: mato.matoSize == MatoSize.metre28,
-                        child: const Text('28M'),
-                        value: MatoSize.metre28,
-                      ),
-                    ];
-                  },
-                ),
-                const Spacer(),
                 Obx(
                   () => updatingShoot.value != null
                       ? ElevatedButton.icon(
@@ -399,52 +379,6 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                 children: [
                                   Expanded(
                                     child: Builder(
-                                      builder: (ctx) => PopupMenuButton<MatoSize>(
-                                        offset: const Offset(30, 30),
-                                        child: Container(
-                                          color: Colors.yellow[900],
-                                          child: Center(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: const [
-                                                Icon(
-                                                  Icons.edit,
-                                                  size: 20,
-                                                  color: Colors.white,
-                                                ),
-                                                Text(
-                                                  'Edit',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        onSelected: (matoSize) async {
-                                          await updateMatoSize(matoSize, _shootController.shootRounds[index]);
-                                          Slidable.of(ctx)?.close();
-                                        },
-                                        itemBuilder: (BuildContext context) {
-                                          return [
-                                            CheckedPopupMenuItem(
-                                              checked: matoSize == MatoSize.metre17,
-                                              child: const Text('17M'),
-                                              value: MatoSize.metre17,
-                                            ),
-                                            CheckedPopupMenuItem(
-                                              checked: matoSize == MatoSize.metre28,
-                                              child: const Text('28M'),
-                                              value: MatoSize.metre28,
-                                            ),
-                                          ];
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Builder(
                                       builder: (ctx) => InkWell(
                                         onTap: () async {
                                           Slidable.of(ctx)?.close();
@@ -516,11 +450,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Text('Round ' + (index + 1).toString()),
-                                            Text(matoSize == MatoSize.metre17
-                                                ? '17M'
-                                                : matoSize == MatoSize.metre28
-                                                    ? '28M'
-                                                    : ''),
+                                            const Text('28M'),
                                             Text('Hit Rate ' +
                                                 (_shootController.shootRounds[index].shootCount > 0
                                                     ? ((_shootController.shootRounds[index].hitCount /

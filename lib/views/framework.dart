@@ -16,14 +16,14 @@ class _FrameworkState extends State<Framework> {
 
   List<Map> page = [
     {
-      'title': 'Calendar',
-      'icon': const FaIcon(FontAwesomeIcons.calendar),
-      'pagename': '/calendarPage',
-    },
-    {
       'title': 'Record',
       'icon': const FaIcon(FontAwesomeIcons.bullseye),
       'pagename': '/shootRecordPage',
+    },
+    {
+      'title': 'Calendar',
+      'icon': const FaIcon(FontAwesomeIcons.calendar),
+      'pagename': '/calendarPage',
     },
     {
       'title': 'Setting',
