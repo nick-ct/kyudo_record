@@ -35,18 +35,18 @@ class App extends StatelessWidget {
             color: Colors.blue[350],
           )),
       debugShowCheckedModeBanner: true,
-      initialRoute: '/calendarPage',
+      initialRoute: '/shootRecordPage',
       onGenerateRoute: (settings) {
         switch (settings.name) {
-          case '/calendarPage':
-            return GetPageRoute(
-              page: () => const CalendarPage(),
-              settings: settings,
-              transition: Transition.fadeIn,
-            );
           case '/shootRecordPage':
             return GetPageRoute(
               page: () => const ShootRecordPage(),
+              settings: settings,
+              transition: Transition.fadeIn,
+            );
+          case '/calendarPage':
+            return GetPageRoute(
+              page: () => const CalendarPage(),
               settings: settings,
               transition: Transition.fadeIn,
             );
