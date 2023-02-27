@@ -109,47 +109,42 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                       width: paintArea,
                       child: Center(
                         child: Obx(
-                          () => Container(
-                            width: paintArea,
-                            height: paintArea,
-                            decoration: BoxDecoration(color: Colors.brown[400]),
-                            child: Stack(
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                //Mato Widget List
-                                summaryData[_selectedIndex.value].mato.drawMato(),
-                                //display record
-                                ...summaryData[_selectedIndex.value]
-                                    .displayRecords
-                                    .where((p0) => !p0.missed)
-                                    .map((record) => Positioned(
-                                          top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
-                                          left: record.hitPositionX * deductPosition + deductPosition - 12,
-                                          child: const SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.close,
-                                                color: Colors.green,
-                                              ),
+                          () => Stack(
+                            alignment: AlignmentDirectional.center,
+                            children: [
+                              //Mato Widget List
+                              summaryData[_selectedIndex.value].mato.drawMato(),
+                              //display record
+                              ...summaryData[_selectedIndex.value]
+                                  .displayRecords
+                                  .where((p0) => !p0.missed)
+                                  .map((record) => Positioned(
+                                        top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
+                                        left: record.hitPositionX * deductPosition + deductPosition - 12,
+                                        child: const SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.close,
+                                              color: Colors.green,
                                             ),
                                           ),
-                                        ))
-                                    .toList(),
-                                //display heatmap
-                                Positioned(
-                                  top: 0,
-                                  left: 0,
-                                  child: Image.memory(
-                                    summaryData[_selectedIndex.value].heatmapBytes!,
-                                    width: paintArea,
-                                    height: paintArea,
-                                    fit: BoxFit.contain,
-                                  ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              //display heatmap
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                child: Image.memory(
+                                  summaryData[_selectedIndex.value].heatmapBytes!,
+                                  width: paintArea,
+                                  height: paintArea,
+                                  fit: BoxFit.contain,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

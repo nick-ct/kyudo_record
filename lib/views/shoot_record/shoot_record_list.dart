@@ -33,7 +33,9 @@ class _ShootRecordListState extends State<ShootRecordList> with TickerProviderSt
         itemCount: _shootController.shootRounds.length,
         separatorBuilder: (context, index) => const SizedBox(height: 8),
         itemBuilder: (context, index) {
+          Mato mato = Mato();
           List<ShootRecord> relatedRecords = _shootController.shootRounds[index].relatedRecord.toList();
+          mato.setDisplayRecrod(relatedRecords);
           relatedRecords.sort((a, b) => a.dateTime.isAfter(b.dateTime) ? 1 : 0);
           return Card(
             child: InkWell(
@@ -87,23 +89,19 @@ class _ShootRecordListState extends State<ShootRecordList> with TickerProviderSt
                     ),
                     child: Row(
                       children: [
+                        mato.drawMatoWithDisplay(scale: 0.35),
                         Expanded(
                           child: Column(
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text('Round ' + (index + 1).toString()),
-                                  Text('Hit Rate ' +
-                                      (_shootController.shootRounds[index].shootCount > 0
-                                          ? ((_shootController.shootRounds[index].hitCount /
-                                                      _shootController.shootRounds[index].shootCount *
-                                                      100)
-                                                  .toStringAsFixed(0) +
-                                              '%')
-                                          : '---'))
-                                ],
-                              ),
+                              Text('Round ' + (index + 1).toString()),
+                              Text('Hit Rate ' +
+                                  (_shootController.shootRounds[index].shootCount > 0
+                                      ? ((_shootController.shootRounds[index].hitCount /
+                                                  _shootController.shootRounds[index].shootCount *
+                                                  100)
+                                              .toStringAsFixed(0) +
+                                          '%')
+                                      : '---')),
                               const SizedBox(height: 4),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

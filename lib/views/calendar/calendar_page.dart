@@ -461,10 +461,10 @@ class _CalendarPageState extends State<CalendarPage> {
               icon: Icon(Icons.summarize),
               label: 'Summary',
             ),
-            NavigationDestination(
-              icon: Icon(Icons.calendar_today),
-              label: 'Schedule',
-            ),
+            // NavigationDestination(
+            //   icon: Icon(Icons.calendar_today),
+            //   label: 'Schedule',
+            // ),
           ],
         ),
       ),

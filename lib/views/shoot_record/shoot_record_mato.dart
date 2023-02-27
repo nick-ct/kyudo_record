@@ -176,83 +176,78 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                   }
                 },
                 child: Obx(
-                  () => Container(
-                    width: paintArea,
-                    height: paintArea,
-                    decoration: BoxDecoration(color: Colors.brown[400]),
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        //Mato Widget List
-                        mato.drawMato(),
-                        //curr record
-                        if (currShoot.value != null)
-                          Positioned(
-                            top: (currShoot.value?.hitPositionY ?? 0.0) * deductPosition * -1 + deductPosition - 12,
-                            left: (currShoot.value?.hitPositionX ?? 0.0) * deductPosition + deductPosition - 12,
-                            child: const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: Center(
-                                child: Icon(
-                                  Icons.close,
-                                  color: Colors.red,
-                                ),
+                  () => Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      //Mato Widget List
+                      mato.drawMato(),
+                      //curr record
+                      if (currShoot.value != null)
+                        Positioned(
+                          top: (currShoot.value?.hitPositionY ?? 0.0) * deductPosition * -1 + deductPosition - 12,
+                          left: (currShoot.value?.hitPositionX ?? 0.0) * deductPosition + deductPosition - 12,
+                          child: const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: Center(
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.red,
                               ),
                             ),
                           ),
-                        //display record
-                        if (showHitPoint.value)
-                          ...displayRecords
-                              .where((p0) => !p0.missed)
-                              .map((record) => Positioned(
-                                    top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
-                                    left: record.hitPositionX * deductPosition + deductPosition - 12,
-                                    child: SizedBox(
-                                      height: 24,
-                                      width: 24,
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.close,
-                                          color: (highlightShoot.value != null && highlightShoot.value == record)
-                                              ? Colors.yellow
-                                              : Colors.green,
-                                        ),
+                        ),
+                      //display record
+                      if (showHitPoint.value)
+                        ...displayRecords
+                            .where((p0) => !p0.missed)
+                            .map((record) => Positioned(
+                                  top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
+                                  left: record.hitPositionX * deductPosition + deductPosition - 12,
+                                  child: SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.close,
+                                        color: (highlightShoot.value != null && highlightShoot.value == record)
+                                            ? Colors.yellow
+                                            : Colors.green,
                                       ),
                                     ),
-                                  ))
-                              .toList(),
-                        //display heatmap
-                        if (showHeatmap.value && heatmapBytes != null)
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            child: Image.memory(
-                              heatmapBytes!,
-                              width: paintArea,
-                              height: paintArea,
-                              fit: BoxFit.contain,
-                            ),
+                                  ),
+                                ))
+                            .toList(),
+                      //display heatmap
+                      if (showHeatmap.value && heatmapBytes != null)
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: Image.memory(
+                            heatmapBytes!,
+                            width: paintArea,
+                            height: paintArea,
+                            fit: BoxFit.contain,
                           ),
-                        //highlight record
-                        if (highlightShoot.value != null)
-                          Positioned(
-                            top: highlightShoot.value!.hitPositionY * deductPosition * -1 + deductPosition - 15,
-                            left: highlightShoot.value!.hitPositionX * deductPosition + deductPosition - 15,
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 2,
-                                  color: Colors.yellow,
-                                ),
+                        ),
+                      //highlight record
+                      if (highlightShoot.value != null)
+                        Positioned(
+                          top: highlightShoot.value!.hitPositionY * deductPosition * -1 + deductPosition - 15,
+                          left: highlightShoot.value!.hitPositionX * deductPosition + deductPosition - 15,
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.yellow,
                               ),
                             ),
-                          )
-                      ],
-                    ),
+                          ),
+                        )
+                    ],
                   ),
                 ),
               ),
