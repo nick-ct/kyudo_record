@@ -30,6 +30,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.4
+  flutter_launcher_icons: "^0.12.0"
 
 flutter:
   uses-material-design: true
@@ -40,3 +41,10 @@ flutter:
     - family: NotoSansHK
       fonts:
         - asset: assets/fonts/NotoSansHK-Regular.otf
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21 # android min sdk min:16, default 21
