@@ -6,97 +6,109 @@ part of 'shoot_round.dart';
 // IsarCollectionGenerator
 // **************************************************************************
 
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, unused_local_variable
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters
 
 extension GetShootRoundCollection on Isar {
-  IsarCollection<ShootRound> get shootRounds => getCollection();
+  IsarCollection<ShootRound> get shootRounds => this.collection();
 }
 
 const ShootRoundSchema = CollectionSchema(
-  name: 'ShootRound',
-  schema:
-      '{"name":"ShootRound","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"hitCount","type":"Long"},{"name":"matoSize","type":"Long"},{"name":"shootCount","type":"Long"}],"indexes":[],"links":[{"name":"relatedRecord","target":"ShootRecord"}]}',
-  idName: 'id',
-  propertyIds: {'dateTime': 0, 'hitCount': 1, 'matoSize': 2, 'shootCount': 3},
-  listProperties: {},
-  indexIds: {},
-  indexValueTypes: {},
-  linkIds: {'relatedRecord': 0, 'history': 1},
-  backlinkLinkNames: {'history': 'relatedRound'},
+  name: r'ShootRound',
+  id: 2809570828714226550,
+  properties: {
+    r'dateTime': PropertySchema(
+      id: 0,
+      name: r'dateTime',
+      type: IsarType.dateTime,
+    ),
+    r'hitCount': PropertySchema(
+      id: 1,
+      name: r'hitCount',
+      type: IsarType.long,
+    ),
+    r'matoSize': PropertySchema(
+      id: 2,
+      name: r'matoSize',
+      type: IsarType.long,
+    ),
+    r'shootCount': PropertySchema(
+      id: 3,
+      name: r'shootCount',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _shootRoundEstimateSize,
+  serialize: _shootRoundSerialize,
+  deserialize: _shootRoundDeserialize,
+  deserializeProp: _shootRoundDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {
+    r'relatedRecord': LinkSchema(
+      id: -3033380282742986763,
+      name: r'relatedRecord',
+      target: r'ShootRecord',
+      single: false,
+    ),
+    r'history': LinkSchema(
+      id: -7225483399530619350,
+      name: r'history',
+      target: r'ShootHistory',
+      single: true,
+      linkName: r'relatedRound',
+    )
+  },
+  embeddedSchemas: {},
   getId: _shootRoundGetId,
-  setId: _shootRoundSetId,
   getLinks: _shootRoundGetLinks,
-  attachLinks: _shootRoundAttachLinks,
-  serializeNative: _shootRoundSerializeNative,
-  deserializeNative: _shootRoundDeserializeNative,
-  deserializePropNative: _shootRoundDeserializePropNative,
-  serializeWeb: _shootRoundSerializeWeb,
-  deserializeWeb: _shootRoundDeserializeWeb,
-  deserializePropWeb: _shootRoundDeserializePropWeb,
-  version: 3,
+  attach: _shootRoundAttach,
+  version: '3.0.5',
 );
 
-int? _shootRoundGetId(ShootRound object) {
-  if (object.id == Isar.autoIncrement) {
-    return null;
-  } else {
-    return object.id;
-  }
+int _shootRoundEstimateSize(
+  ShootRound object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
 }
 
-void _shootRoundSetId(ShootRound object, int id) {
-  object.id = id;
+void _shootRoundSerialize(
+  ShootRound object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDateTime(offsets[0], object.dateTime);
+  writer.writeLong(offsets[1], object.hitCount);
+  writer.writeLong(offsets[2], object.matoSize);
+  writer.writeLong(offsets[3], object.shootCount);
 }
 
-List<IsarLinkBase> _shootRoundGetLinks(ShootRound object) {
-  return [object.relatedRecord, object.history];
-}
-
-void _shootRoundSerializeNative(
-    IsarCollection<ShootRound> collection,
-    IsarRawObject rawObj,
-    ShootRound object,
-    int staticSize,
-    List<int> offsets,
-    AdapterAlloc alloc) {
-  var dynamicSize = 0;
-  final value0 = object.dateTime;
-  final _dateTime = value0;
-  final value1 = object.hitCount;
-  final _hitCount = value1;
-  final value2 = object.matoSize;
-  final _matoSize = value2;
-  final value3 = object.shootCount;
-  final _shootCount = value3;
-  final size = staticSize + dynamicSize;
-
-  rawObj.buffer = alloc(size);
-  rawObj.buffer_length = size;
-  final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
-  final writer = IsarBinaryWriter(buffer, staticSize);
-  writer.writeDateTime(offsets[0], _dateTime);
-  writer.writeLong(offsets[1], _hitCount);
-  writer.writeLong(offsets[2], _matoSize);
-  writer.writeLong(offsets[3], _shootCount);
-}
-
-ShootRound _shootRoundDeserializeNative(IsarCollection<ShootRound> collection,
-    int id, IsarBinaryReader reader, List<int> offsets) {
+ShootRound _shootRoundDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
   final object = ShootRound();
   object.dateTime = reader.readDateTime(offsets[0]);
   object.hitCount = reader.readLong(offsets[1]);
   object.id = id;
   object.matoSize = reader.readLong(offsets[2]);
   object.shootCount = reader.readLong(offsets[3]);
-  _shootRoundAttachLinks(collection, id, object);
   return object;
 }
 
-P _shootRoundDeserializePropNative<P>(
-    int id, IsarBinaryReader reader, int propertyIndex, int offset) {
-  switch (propertyIndex) {
-    case -1:
-      return id as P;
+P _shootRoundDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
@@ -106,134 +118,100 @@ P _shootRoundDeserializePropNative<P>(
     case 3:
       return (reader.readLong(offset)) as P;
     default:
-      throw 'Illegal propertyIndex';
+      throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-dynamic _shootRoundSerializeWeb(
-    IsarCollection<ShootRound> collection, ShootRound object) {
-  final jsObj = IsarNative.newJsObject();
-  IsarNative.jsObjectSet(
-      jsObj, 'dateTime', object.dateTime.toUtc().millisecondsSinceEpoch);
-  IsarNative.jsObjectSet(jsObj, 'hitCount', object.hitCount);
-  IsarNative.jsObjectSet(jsObj, 'id', object.id);
-  IsarNative.jsObjectSet(jsObj, 'matoSize', object.matoSize);
-  IsarNative.jsObjectSet(jsObj, 'shootCount', object.shootCount);
-  return jsObj;
+Id _shootRoundGetId(ShootRound object) {
+  return object.id;
 }
 
-ShootRound _shootRoundDeserializeWeb(
-    IsarCollection<ShootRound> collection, dynamic jsObj) {
-  final object = ShootRound();
-  object.dateTime = IsarNative.jsObjectGet(jsObj, 'dateTime') != null
-      ? DateTime.fromMillisecondsSinceEpoch(
-              IsarNative.jsObjectGet(jsObj, 'dateTime'),
-              isUtc: true)
-          .toLocal()
-      : DateTime.fromMillisecondsSinceEpoch(0);
-  object.hitCount =
-      IsarNative.jsObjectGet(jsObj, 'hitCount') ?? double.negativeInfinity;
-  object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-  object.matoSize =
-      IsarNative.jsObjectGet(jsObj, 'matoSize') ?? double.negativeInfinity;
-  object.shootCount =
-      IsarNative.jsObjectGet(jsObj, 'shootCount') ?? double.negativeInfinity;
-  _shootRoundAttachLinks(collection,
-      IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
-  return object;
+List<IsarLinkBase<dynamic>> _shootRoundGetLinks(ShootRound object) {
+  return [object.relatedRecord, object.history];
 }
 
-P _shootRoundDeserializePropWeb<P>(Object jsObj, String propertyName) {
-  switch (propertyName) {
-    case 'dateTime':
-      return (IsarNative.jsObjectGet(jsObj, 'dateTime') != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-                  IsarNative.jsObjectGet(jsObj, 'dateTime'),
-                  isUtc: true)
-              .toLocal()
-          : DateTime.fromMillisecondsSinceEpoch(0)) as P;
-    case 'hitCount':
-      return (IsarNative.jsObjectGet(jsObj, 'hitCount') ??
-          double.negativeInfinity) as P;
-    case 'id':
-      return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
-          as P;
-    case 'matoSize':
-      return (IsarNative.jsObjectGet(jsObj, 'matoSize') ??
-          double.negativeInfinity) as P;
-    case 'shootCount':
-      return (IsarNative.jsObjectGet(jsObj, 'shootCount') ??
-          double.negativeInfinity) as P;
-    default:
-      throw 'Illegal propertyName';
-  }
-}
-
-void _shootRoundAttachLinks(IsarCollection col, int id, ShootRound object) {
-  object.relatedRecord.attach(col, col.isar.shootRecords, 'relatedRecord', id);
-  object.history.attach(col, col.isar.shootHistorys, 'history', id);
+void _shootRoundAttach(IsarCollection<dynamic> col, Id id, ShootRound object) {
+  object.id = id;
+  object.relatedRecord
+      .attach(col, col.isar.collection<ShootRecord>(), r'relatedRecord', id);
+  object.history
+      .attach(col, col.isar.collection<ShootHistory>(), r'history', id);
 }
 
 extension ShootRoundQueryWhereSort
     on QueryBuilder<ShootRound, ShootRound, QWhere> {
   QueryBuilder<ShootRound, ShootRound, QAfterWhere> anyId() {
-    return addWhereClauseInternal(const IdWhereClause.any());
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
   }
 }
 
 extension ShootRoundQueryWhere
     on QueryBuilder<ShootRound, ShootRound, QWhereClause> {
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idEqualTo(int id) {
-    return addWhereClauseInternal(IdWhereClause.between(
-      lower: id,
-      includeLower: true,
-      upper: id,
-      includeUpper: true,
-    ));
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idNotEqualTo(int id) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(
-        IdWhereClause.lessThan(upper: id, includeUpper: false),
-      ).addWhereClauseInternal(
-        IdWhereClause.greaterThan(lower: id, includeLower: false),
-      );
-    } else {
-      return addWhereClauseInternal(
-        IdWhereClause.greaterThan(lower: id, includeLower: false),
-      ).addWhereClauseInternal(
-        IdWhereClause.lessThan(upper: id, includeUpper: false),
-      );
-    }
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idGreaterThan(int id,
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
-    return addWhereClauseInternal(
-      IdWhereClause.greaterThan(lower: id, includeLower: include),
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
   }
 
-  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idLessThan(int id,
+  QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
-    return addWhereClauseInternal(
-      IdWhereClause.lessThan(upper: id, includeUpper: include),
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterWhereClause> idBetween(
-    int lowerId,
-    int upperId, {
+    Id lowerId,
+    Id upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addWhereClauseInternal(IdWhereClause.between(
-      lower: lowerId,
-      includeLower: includeLower,
-      upper: upperId,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 }
 
@@ -241,11 +219,12 @@ extension ShootRoundQueryFilter
     on QueryBuilder<ShootRound, ShootRound, QFilterCondition> {
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateTimeEqualTo(
       DateTime value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'dateTime',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateTime',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
@@ -253,24 +232,26 @@ extension ShootRoundQueryFilter
     DateTime value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'dateTime',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateTime',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateTimeLessThan(
     DateTime value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'dateTime',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateTime',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> dateTimeBetween(
@@ -279,22 +260,25 @@ extension ShootRoundQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'dateTime',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateTime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> hitCountEqualTo(
       int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'hitCount',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hitCount',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
@@ -302,24 +286,26 @@ extension ShootRoundQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'hitCount',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hitCount',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> hitCountLessThan(
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'hitCount',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hitCount',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> hitCountBetween(
@@ -328,70 +314,78 @@ extension ShootRoundQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'hitCount',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hitCount',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> idEqualTo(
-      int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'id',
-      value: value,
-    ));
+      Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> idGreaterThan(
-    int value, {
+    Id value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> idLessThan(
-    int value, {
+    Id value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> idBetween(
-    int lower,
-    int upper, {
+    Id lower,
+    Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'id',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> matoSizeEqualTo(
       int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'matoSize',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'matoSize',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
@@ -399,24 +393,26 @@ extension ShootRoundQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'matoSize',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'matoSize',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> matoSizeLessThan(
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'matoSize',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'matoSize',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> matoSizeBetween(
@@ -425,22 +421,25 @@ extension ShootRoundQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'matoSize',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'matoSize',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> shootCountEqualTo(
       int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'shootCount',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'shootCount',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
@@ -448,12 +447,13 @@ extension ShootRoundQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'shootCount',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'shootCount',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
@@ -461,12 +461,13 @@ extension ShootRoundQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'shootCount',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'shootCount',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> shootCountBetween(
@@ -475,165 +476,268 @@ extension ShootRoundQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'shootCount',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'shootCount',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 }
+
+extension ShootRoundQueryObject
+    on QueryBuilder<ShootRound, ShootRound, QFilterCondition> {}
 
 extension ShootRoundQueryLinks
     on QueryBuilder<ShootRound, ShootRound, QFilterCondition> {
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> relatedRecord(
       FilterQuery<ShootRecord> q) {
-    return linkInternal(
-      isar.shootRecords,
-      q,
-      'relatedRecord',
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'relatedRecord');
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      relatedRecordLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRecord', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      relatedRecordIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRecord', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      relatedRecordIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRecord', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      relatedRecordLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRecord', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      relatedRecordLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRecord', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition>
+      relatedRecordLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'relatedRecord', lower, includeLower, upper, includeUpper);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> history(
       FilterQuery<ShootHistory> q) {
-    return linkInternal(
-      isar.shootHistorys,
-      q,
-      'history',
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'history');
+    });
+  }
+
+  QueryBuilder<ShootRound, ShootRound, QAfterFilterCondition> historyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'history', 0, true, 0, true);
+    });
   }
 }
 
-extension ShootRoundQueryWhereSortBy
+extension ShootRoundQuerySortBy
     on QueryBuilder<ShootRound, ShootRound, QSortBy> {
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByDateTime() {
-    return addSortByInternal('dateTime', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByDateTimeDesc() {
-    return addSortByInternal('dateTime', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByHitCount() {
-    return addSortByInternal('hitCount', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitCount', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByHitCountDesc() {
-    return addSortByInternal('hitCount', Sort.desc);
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortById() {
-    return addSortByInternal('id', Sort.asc);
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitCount', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByMatoSize() {
-    return addSortByInternal('matoSize', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matoSize', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByMatoSizeDesc() {
-    return addSortByInternal('matoSize', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matoSize', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByShootCount() {
-    return addSortByInternal('shootCount', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shootCount', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> sortByShootCountDesc() {
-    return addSortByInternal('shootCount', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shootCount', Sort.desc);
+    });
   }
 }
 
-extension ShootRoundQueryWhereSortThenBy
+extension ShootRoundQuerySortThenBy
     on QueryBuilder<ShootRound, ShootRound, QSortThenBy> {
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByDateTime() {
-    return addSortByInternal('dateTime', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByDateTimeDesc() {
-    return addSortByInternal('dateTime', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByHitCount() {
-    return addSortByInternal('hitCount', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitCount', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByHitCountDesc() {
-    return addSortByInternal('hitCount', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitCount', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenById() {
-    return addSortByInternal('id', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByMatoSize() {
-    return addSortByInternal('matoSize', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matoSize', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByMatoSizeDesc() {
-    return addSortByInternal('matoSize', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'matoSize', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByShootCount() {
-    return addSortByInternal('shootCount', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shootCount', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QAfterSortBy> thenByShootCountDesc() {
-    return addSortByInternal('shootCount', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shootCount', Sort.desc);
+    });
   }
 }
 
 extension ShootRoundQueryWhereDistinct
     on QueryBuilder<ShootRound, ShootRound, QDistinct> {
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByDateTime() {
-    return addDistinctByInternal('dateTime');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateTime');
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByHitCount() {
-    return addDistinctByInternal('hitCount');
-  }
-
-  QueryBuilder<ShootRound, ShootRound, QDistinct> distinctById() {
-    return addDistinctByInternal('id');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hitCount');
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByMatoSize() {
-    return addDistinctByInternal('matoSize');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'matoSize');
+    });
   }
 
   QueryBuilder<ShootRound, ShootRound, QDistinct> distinctByShootCount() {
-    return addDistinctByInternal('shootCount');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'shootCount');
+    });
   }
 }
 
 extension ShootRoundQueryProperty
     on QueryBuilder<ShootRound, ShootRound, QQueryProperty> {
+  QueryBuilder<ShootRound, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
   QueryBuilder<ShootRound, DateTime, QQueryOperations> dateTimeProperty() {
-    return addPropertyNameInternal('dateTime');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateTime');
+    });
   }
 
   QueryBuilder<ShootRound, int, QQueryOperations> hitCountProperty() {
-    return addPropertyNameInternal('hitCount');
-  }
-
-  QueryBuilder<ShootRound, int, QQueryOperations> idProperty() {
-    return addPropertyNameInternal('id');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hitCount');
+    });
   }
 
   QueryBuilder<ShootRound, int, QQueryOperations> matoSizeProperty() {
-    return addPropertyNameInternal('matoSize');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'matoSize');
+    });
   }
 
   QueryBuilder<ShootRound, int, QQueryOperations> shootCountProperty() {
-    return addPropertyNameInternal('shootCount');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'shootCount');
+    });
   }
 }

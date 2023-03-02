@@ -6,94 +6,93 @@ part of 'shoot_record.dart';
 // IsarCollectionGenerator
 // **************************************************************************
 
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, unused_local_variable
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters
 
 extension GetShootRecordCollection on Isar {
-  IsarCollection<ShootRecord> get shootRecords => getCollection();
+  IsarCollection<ShootRecord> get shootRecords => this.collection();
 }
 
 const ShootRecordSchema = CollectionSchema(
-  name: 'ShootRecord',
-  schema:
-      '{"name":"ShootRecord","idName":"id","properties":[{"name":"dateTime","type":"Long"},{"name":"hitPositionX","type":"Double"},{"name":"hitPositionY","type":"Double"},{"name":"hitTarget","type":"Bool"},{"name":"missed","type":"Bool"}],"indexes":[],"links":[]}',
-  idName: 'id',
-  propertyIds: {
-    'dateTime': 0,
-    'hitPositionX': 1,
-    'hitPositionY': 2,
-    'hitTarget': 3,
-    'missed': 4
+  name: r'ShootRecord',
+  id: 8447093813824157044,
+  properties: {
+    r'dateTime': PropertySchema(
+      id: 0,
+      name: r'dateTime',
+      type: IsarType.dateTime,
+    ),
+    r'hitPositionX': PropertySchema(
+      id: 1,
+      name: r'hitPositionX',
+      type: IsarType.double,
+    ),
+    r'hitPositionY': PropertySchema(
+      id: 2,
+      name: r'hitPositionY',
+      type: IsarType.double,
+    ),
+    r'hitTarget': PropertySchema(
+      id: 3,
+      name: r'hitTarget',
+      type: IsarType.bool,
+    ),
+    r'missed': PropertySchema(
+      id: 4,
+      name: r'missed',
+      type: IsarType.bool,
+    )
   },
-  listProperties: {},
-  indexIds: {},
-  indexValueTypes: {},
-  linkIds: {'round': 0},
-  backlinkLinkNames: {'round': 'relatedRecord'},
+  estimateSize: _shootRecordEstimateSize,
+  serialize: _shootRecordSerialize,
+  deserialize: _shootRecordDeserialize,
+  deserializeProp: _shootRecordDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {
+    r'round': LinkSchema(
+      id: -1208914991570836461,
+      name: r'round',
+      target: r'ShootRound',
+      single: true,
+      linkName: r'relatedRecord',
+    )
+  },
+  embeddedSchemas: {},
   getId: _shootRecordGetId,
-  setId: _shootRecordSetId,
   getLinks: _shootRecordGetLinks,
-  attachLinks: _shootRecordAttachLinks,
-  serializeNative: _shootRecordSerializeNative,
-  deserializeNative: _shootRecordDeserializeNative,
-  deserializePropNative: _shootRecordDeserializePropNative,
-  serializeWeb: _shootRecordSerializeWeb,
-  deserializeWeb: _shootRecordDeserializeWeb,
-  deserializePropWeb: _shootRecordDeserializePropWeb,
-  version: 3,
+  attach: _shootRecordAttach,
+  version: '3.0.5',
 );
 
-int? _shootRecordGetId(ShootRecord object) {
-  if (object.id == Isar.autoIncrement) {
-    return null;
-  } else {
-    return object.id;
-  }
+int _shootRecordEstimateSize(
+  ShootRecord object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
 }
 
-void _shootRecordSetId(ShootRecord object, int id) {
-  object.id = id;
+void _shootRecordSerialize(
+  ShootRecord object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDateTime(offsets[0], object.dateTime);
+  writer.writeDouble(offsets[1], object.hitPositionX);
+  writer.writeDouble(offsets[2], object.hitPositionY);
+  writer.writeBool(offsets[3], object.hitTarget);
+  writer.writeBool(offsets[4], object.missed);
 }
 
-List<IsarLinkBase> _shootRecordGetLinks(ShootRecord object) {
-  return [object.round];
-}
-
-void _shootRecordSerializeNative(
-    IsarCollection<ShootRecord> collection,
-    IsarRawObject rawObj,
-    ShootRecord object,
-    int staticSize,
-    List<int> offsets,
-    AdapterAlloc alloc) {
-  var dynamicSize = 0;
-  final value0 = object.dateTime;
-  final _dateTime = value0;
-  final value1 = object.hitPositionX;
-  final _hitPositionX = value1;
-  final value2 = object.hitPositionY;
-  final _hitPositionY = value2;
-  final value3 = object.hitTarget;
-  final _hitTarget = value3;
-  final value4 = object.missed;
-  final _missed = value4;
-  final size = staticSize + dynamicSize;
-
-  rawObj.buffer = alloc(size);
-  rawObj.buffer_length = size;
-  final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
-  final writer = IsarBinaryWriter(buffer, staticSize);
-  writer.writeDateTime(offsets[0], _dateTime);
-  writer.writeDouble(offsets[1], _hitPositionX);
-  writer.writeDouble(offsets[2], _hitPositionY);
-  writer.writeBool(offsets[3], _hitTarget);
-  writer.writeBool(offsets[4], _missed);
-}
-
-ShootRecord _shootRecordDeserializeNative(
-    IsarCollection<ShootRecord> collection,
-    int id,
-    IsarBinaryReader reader,
-    List<int> offsets) {
+ShootRecord _shootRecordDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
   final object = ShootRecord();
   object.dateTime = reader.readDateTime(offsets[0]);
   object.hitPositionX = reader.readDouble(offsets[1]);
@@ -101,15 +100,16 @@ ShootRecord _shootRecordDeserializeNative(
   object.hitTarget = reader.readBool(offsets[3]);
   object.id = id;
   object.missed = reader.readBool(offsets[4]);
-  _shootRecordAttachLinks(collection, id, object);
   return object;
 }
 
-P _shootRecordDeserializePropNative<P>(
-    int id, IsarBinaryReader reader, int propertyIndex, int offset) {
-  switch (propertyIndex) {
-    case -1:
-      return id as P;
+P _shootRecordDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
@@ -121,137 +121,99 @@ P _shootRecordDeserializePropNative<P>(
     case 4:
       return (reader.readBool(offset)) as P;
     default:
-      throw 'Illegal propertyIndex';
+      throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-dynamic _shootRecordSerializeWeb(
-    IsarCollection<ShootRecord> collection, ShootRecord object) {
-  final jsObj = IsarNative.newJsObject();
-  IsarNative.jsObjectSet(
-      jsObj, 'dateTime', object.dateTime.toUtc().millisecondsSinceEpoch);
-  IsarNative.jsObjectSet(jsObj, 'hitPositionX', object.hitPositionX);
-  IsarNative.jsObjectSet(jsObj, 'hitPositionY', object.hitPositionY);
-  IsarNative.jsObjectSet(jsObj, 'hitTarget', object.hitTarget);
-  IsarNative.jsObjectSet(jsObj, 'id', object.id);
-  IsarNative.jsObjectSet(jsObj, 'missed', object.missed);
-  return jsObj;
+Id _shootRecordGetId(ShootRecord object) {
+  return object.id;
 }
 
-ShootRecord _shootRecordDeserializeWeb(
-    IsarCollection<ShootRecord> collection, dynamic jsObj) {
-  final object = ShootRecord();
-  object.dateTime = IsarNative.jsObjectGet(jsObj, 'dateTime') != null
-      ? DateTime.fromMillisecondsSinceEpoch(
-              IsarNative.jsObjectGet(jsObj, 'dateTime'),
-              isUtc: true)
-          .toLocal()
-      : DateTime.fromMillisecondsSinceEpoch(0);
-  object.hitPositionX =
-      IsarNative.jsObjectGet(jsObj, 'hitPositionX') ?? double.negativeInfinity;
-  object.hitPositionY =
-      IsarNative.jsObjectGet(jsObj, 'hitPositionY') ?? double.negativeInfinity;
-  object.hitTarget = IsarNative.jsObjectGet(jsObj, 'hitTarget') ?? false;
-  object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-  object.missed = IsarNative.jsObjectGet(jsObj, 'missed') ?? false;
-  _shootRecordAttachLinks(collection,
-      IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
-  return object;
+List<IsarLinkBase<dynamic>> _shootRecordGetLinks(ShootRecord object) {
+  return [object.round];
 }
 
-P _shootRecordDeserializePropWeb<P>(Object jsObj, String propertyName) {
-  switch (propertyName) {
-    case 'dateTime':
-      return (IsarNative.jsObjectGet(jsObj, 'dateTime') != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-                  IsarNative.jsObjectGet(jsObj, 'dateTime'),
-                  isUtc: true)
-              .toLocal()
-          : DateTime.fromMillisecondsSinceEpoch(0)) as P;
-    case 'hitPositionX':
-      return (IsarNative.jsObjectGet(jsObj, 'hitPositionX') ??
-          double.negativeInfinity) as P;
-    case 'hitPositionY':
-      return (IsarNative.jsObjectGet(jsObj, 'hitPositionY') ??
-          double.negativeInfinity) as P;
-    case 'hitTarget':
-      return (IsarNative.jsObjectGet(jsObj, 'hitTarget') ?? false) as P;
-    case 'id':
-      return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
-          as P;
-    case 'missed':
-      return (IsarNative.jsObjectGet(jsObj, 'missed') ?? false) as P;
-    default:
-      throw 'Illegal propertyName';
-  }
-}
-
-void _shootRecordAttachLinks(IsarCollection col, int id, ShootRecord object) {
-  object.round.attach(col, col.isar.shootRounds, 'round', id);
+void _shootRecordAttach(
+    IsarCollection<dynamic> col, Id id, ShootRecord object) {
+  object.id = id;
+  object.round.attach(col, col.isar.collection<ShootRound>(), r'round', id);
 }
 
 extension ShootRecordQueryWhereSort
     on QueryBuilder<ShootRecord, ShootRecord, QWhere> {
   QueryBuilder<ShootRecord, ShootRecord, QAfterWhere> anyId() {
-    return addWhereClauseInternal(const IdWhereClause.any());
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
   }
 }
 
 extension ShootRecordQueryWhere
     on QueryBuilder<ShootRecord, ShootRecord, QWhereClause> {
-  QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idEqualTo(int id) {
-    return addWhereClauseInternal(IdWhereClause.between(
-      lower: id,
-      includeLower: true,
-      upper: id,
-      includeUpper: true,
-    ));
+  QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idNotEqualTo(
-      int id) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(
-        IdWhereClause.lessThan(upper: id, includeUpper: false),
-      ).addWhereClauseInternal(
-        IdWhereClause.greaterThan(lower: id, includeLower: false),
-      );
-    } else {
-      return addWhereClauseInternal(
-        IdWhereClause.greaterThan(lower: id, includeLower: false),
-      ).addWhereClauseInternal(
-        IdWhereClause.lessThan(upper: id, includeUpper: false),
-      );
-    }
+      Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
   }
 
-  QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idGreaterThan(
-      int id,
+  QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
-    return addWhereClauseInternal(
-      IdWhereClause.greaterThan(lower: id, includeLower: include),
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
   }
 
-  QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idLessThan(int id,
+  QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
-    return addWhereClauseInternal(
-      IdWhereClause.lessThan(upper: id, includeUpper: include),
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterWhereClause> idBetween(
-    int lowerId,
-    int upperId, {
+    Id lowerId,
+    Id upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addWhereClauseInternal(IdWhereClause.between(
-      lower: lowerId,
-      includeLower: includeLower,
-      upper: upperId,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 }
 
@@ -259,11 +221,12 @@ extension ShootRecordQueryFilter
     on QueryBuilder<ShootRecord, ShootRecord, QFilterCondition> {
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> dateTimeEqualTo(
       DateTime value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'dateTime',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateTime',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
@@ -271,12 +234,13 @@ extension ShootRecordQueryFilter
     DateTime value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'dateTime',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateTime',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
@@ -284,12 +248,13 @@ extension ShootRecordQueryFilter
     DateTime value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'dateTime',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateTime',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> dateTimeBetween(
@@ -298,312 +263,452 @@ extension ShootRecordQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'dateTime',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateTime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
-      hitPositionXGreaterThan(double value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: false,
-      property: 'hitPositionX',
-      value: value,
-    ));
+      hitPositionXEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hitPositionX',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
-      hitPositionXLessThan(double value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: false,
-      property: 'hitPositionX',
-      value: value,
-    ));
+      hitPositionXGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hitPositionX',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
-      hitPositionXBetween(double lower, double upper) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'hitPositionX',
-      lower: lower,
-      includeLower: false,
-      upper: upper,
-      includeUpper: false,
-    ));
+      hitPositionXLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hitPositionX',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
-      hitPositionYGreaterThan(double value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: false,
-      property: 'hitPositionY',
-      value: value,
-    ));
+      hitPositionXBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hitPositionX',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
-      hitPositionYLessThan(double value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: false,
-      property: 'hitPositionY',
-      value: value,
-    ));
+      hitPositionYEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hitPositionY',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
-      hitPositionYBetween(double lower, double upper) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'hitPositionY',
-      lower: lower,
-      includeLower: false,
-      upper: upper,
-      includeUpper: false,
-    ));
+      hitPositionYGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'hitPositionY',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
+      hitPositionYLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'hitPositionY',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
+      hitPositionYBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'hitPositionY',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition>
       hitTargetEqualTo(bool value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'hitTarget',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hitTarget',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> idEqualTo(
-      int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'id',
-      value: value,
-    ));
+      Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> idGreaterThan(
-    int value, {
+    Id value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> idLessThan(
-    int value, {
+    Id value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> idBetween(
-    int lower,
-    int upper, {
+    Id lower,
+    Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'id',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> missedEqualTo(
       bool value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'missed',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'missed',
+        value: value,
+      ));
+    });
   }
 }
+
+extension ShootRecordQueryObject
+    on QueryBuilder<ShootRecord, ShootRecord, QFilterCondition> {}
 
 extension ShootRecordQueryLinks
     on QueryBuilder<ShootRecord, ShootRecord, QFilterCondition> {
   QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> round(
       FilterQuery<ShootRound> q) {
-    return linkInternal(
-      isar.shootRounds,
-      q,
-      'round',
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'round');
+    });
+  }
+
+  QueryBuilder<ShootRecord, ShootRecord, QAfterFilterCondition> roundIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'round', 0, true, 0, true);
+    });
   }
 }
 
-extension ShootRecordQueryWhereSortBy
+extension ShootRecordQuerySortBy
     on QueryBuilder<ShootRecord, ShootRecord, QSortBy> {
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByDateTime() {
-    return addSortByInternal('dateTime', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByDateTimeDesc() {
-    return addSortByInternal('dateTime', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByHitPositionX() {
-    return addSortByInternal('hitPositionX', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionX', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy>
       sortByHitPositionXDesc() {
-    return addSortByInternal('hitPositionX', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionX', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByHitPositionY() {
-    return addSortByInternal('hitPositionY', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionY', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy>
       sortByHitPositionYDesc() {
-    return addSortByInternal('hitPositionY', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionY', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByHitTarget() {
-    return addSortByInternal('hitTarget', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitTarget', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByHitTargetDesc() {
-    return addSortByInternal('hitTarget', Sort.desc);
-  }
-
-  QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortById() {
-    return addSortByInternal('id', Sort.asc);
-  }
-
-  QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitTarget', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByMissed() {
-    return addSortByInternal('missed', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'missed', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> sortByMissedDesc() {
-    return addSortByInternal('missed', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'missed', Sort.desc);
+    });
   }
 }
 
-extension ShootRecordQueryWhereSortThenBy
+extension ShootRecordQuerySortThenBy
     on QueryBuilder<ShootRecord, ShootRecord, QSortThenBy> {
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByDateTime() {
-    return addSortByInternal('dateTime', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByDateTimeDesc() {
-    return addSortByInternal('dateTime', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByHitPositionX() {
-    return addSortByInternal('hitPositionX', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionX', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy>
       thenByHitPositionXDesc() {
-    return addSortByInternal('hitPositionX', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionX', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByHitPositionY() {
-    return addSortByInternal('hitPositionY', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionY', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy>
       thenByHitPositionYDesc() {
-    return addSortByInternal('hitPositionY', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitPositionY', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByHitTarget() {
-    return addSortByInternal('hitTarget', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitTarget', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByHitTargetDesc() {
-    return addSortByInternal('hitTarget', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hitTarget', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenById() {
-    return addSortByInternal('id', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByMissed() {
-    return addSortByInternal('missed', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'missed', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QAfterSortBy> thenByMissedDesc() {
-    return addSortByInternal('missed', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'missed', Sort.desc);
+    });
   }
 }
 
 extension ShootRecordQueryWhereDistinct
     on QueryBuilder<ShootRecord, ShootRecord, QDistinct> {
   QueryBuilder<ShootRecord, ShootRecord, QDistinct> distinctByDateTime() {
-    return addDistinctByInternal('dateTime');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateTime');
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QDistinct> distinctByHitPositionX() {
-    return addDistinctByInternal('hitPositionX');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hitPositionX');
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QDistinct> distinctByHitPositionY() {
-    return addDistinctByInternal('hitPositionY');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hitPositionY');
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QDistinct> distinctByHitTarget() {
-    return addDistinctByInternal('hitTarget');
-  }
-
-  QueryBuilder<ShootRecord, ShootRecord, QDistinct> distinctById() {
-    return addDistinctByInternal('id');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hitTarget');
+    });
   }
 
   QueryBuilder<ShootRecord, ShootRecord, QDistinct> distinctByMissed() {
-    return addDistinctByInternal('missed');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'missed');
+    });
   }
 }
 
 extension ShootRecordQueryProperty
     on QueryBuilder<ShootRecord, ShootRecord, QQueryProperty> {
+  QueryBuilder<ShootRecord, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
   QueryBuilder<ShootRecord, DateTime, QQueryOperations> dateTimeProperty() {
-    return addPropertyNameInternal('dateTime');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateTime');
+    });
   }
 
   QueryBuilder<ShootRecord, double, QQueryOperations> hitPositionXProperty() {
-    return addPropertyNameInternal('hitPositionX');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hitPositionX');
+    });
   }
 
   QueryBuilder<ShootRecord, double, QQueryOperations> hitPositionYProperty() {
-    return addPropertyNameInternal('hitPositionY');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hitPositionY');
+    });
   }
 
   QueryBuilder<ShootRecord, bool, QQueryOperations> hitTargetProperty() {
-    return addPropertyNameInternal('hitTarget');
-  }
-
-  QueryBuilder<ShootRecord, int, QQueryOperations> idProperty() {
-    return addPropertyNameInternal('id');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hitTarget');
+    });
   }
 
   QueryBuilder<ShootRecord, bool, QQueryOperations> missedProperty() {
-    return addPropertyNameInternal('missed');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'missed');
+    });
   }
 }

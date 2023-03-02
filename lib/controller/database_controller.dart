@@ -11,56 +11,48 @@ class DatabaseController extends GetxController {
   Future<void> init() async {
     final dir = await getApplicationSupportDirectory();
     isar = await Isar.open(
-      schemas: [ShootRecordSchema, ShootRoundSchema, ShootHistorySchema],
+      [ShootRecordSchema, ShootRoundSchema, ShootHistorySchema],
       directory: dir.path,
       inspector: true,
     );
   }
 
-  Future<int?> addShootRecord(ShootRecord data) async {
+  Future<int?> addShootRecord(ShootRecord data, ShootRound link) async {
     int? recId;
-    await isar.writeTxn((isar) async {
-      recId = await isar.shootRecords.put(
-        data,
-        replaceOnConflict: true,
-        saveLinks: true,
-      );
+    data.round.value = link;
+    await isar.writeTxn(() async {
+      recId = await isar.shootRecords.put(data);
+      await data.round.save();
     });
     return recId;
   }
 
   Future<void> removeShootRecord(ShootRecord data) async {
-    await isar.writeTxn((isar) async {
+    await isar.writeTxn(() async {
       await isar.shootRecords.delete(data.id);
     });
   }
 
-  Future<int?> addShootRound(ShootRound data) async {
+  Future<int?> addShootRound(ShootRound data, ShootHistory link) async {
     int? recId;
-    await isar.writeTxn((isar) async {
-      recId = await isar.shootRounds.put(
-        data,
-        replaceOnConflict: true,
-        saveLinks: true,
-      );
+    data.history.value = link;
+    await isar.writeTxn(() async {
+      recId = await isar.shootRounds.put(data);
+      await data.history.save();
     });
     return recId;
   }
 
   Future<void> removeShootRound(ShootRound data) async {
-    await isar.writeTxn((isar) async {
+    await isar.writeTxn(() async {
       await isar.shootRounds.delete(data.id);
     });
   }
 
   Future<int?> addShootHistory(ShootHistory data) async {
     int? recId;
-    await isar.writeTxn((isar) async {
-      recId = await isar.shootHistorys.put(
-        data,
-        replaceOnConflict: true,
-        saveLinks: true,
-      );
+    await isar.writeTxn(() async {
+      recId = await isar.shootHistorys.put(data);
     });
     return recId;
   }
@@ -76,7 +68,7 @@ class DatabaseController extends GetxController {
   }
 
   void cleanDatabase() {
-    isar.writeTxn((isar) async {
+    isar.writeTxn(() async {
       await isar.shootHistorys.clear();
       await isar.shootRounds.clear();
       await isar.shootRecords.clear();

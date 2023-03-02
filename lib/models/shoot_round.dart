@@ -6,8 +6,7 @@ part 'shoot_round.g.dart';
 
 @Collection()
 class ShootRound {
-  @Id()
-  int id = Isar.autoIncrement;
+  Id id = Isar.autoIncrement;
   late DateTime dateTime;
   late int shootCount;
   late int hitCount;

@@ -69,17 +69,18 @@ class ShootController extends GetxController {
   Future<void> addShootRecord(ShootRecord shootRecord, int round) async {
     if (shootRounds[round].shootCount >= 4) return;
 
-    await _databaseController.addShootRecord(shootRecord);
+    //update History
+    if (shootRecord.hitTarget) shootHistory?.totalHitTarget += 1;
+    shootHistory?.totalShoot += 1;
+
     //update Round
     if (shootRecord.hitTarget) shootRounds[round].hitCount += 1;
     shootRounds[round].shootCount += 1;
     shootRounds[round].relatedRecord.add(shootRecord);
-    await _databaseController.addShootRound(shootRounds[round]);
 
-    //update History
-    if (shootRecord.hitTarget) shootHistory?.totalHitTarget += 1;
-    shootHistory?.totalShoot += 1;
     await _databaseController.addShootHistory(shootHistory!);
+    await _databaseController.addShootRound(shootRounds[round], shootHistory!);
+    await _databaseController.addShootRecord(shootRecord, shootRounds[round]);
 
     //check round
     if (shootRounds.last.shootCount == 4) {
@@ -107,9 +108,9 @@ class ShootController extends GetxController {
       ..hitTarget = newShootRecord.hitTarget
       ..missed = newShootRecord.missed;
 
-    await _databaseController.addShootRecord(newShootRecord);
-    await _databaseController.addShootRound(round);
     await _databaseController.addShootHistory(shootHistory!);
+    await _databaseController.addShootRound(round, shootHistory!);
+    await _databaseController.addShootRecord(newShootRecord, round);
   }
 
   Future<void> removeShootRecord(ShootRecord shootRecord) async {
@@ -126,7 +127,7 @@ class ShootController extends GetxController {
     round.relatedRecord.remove(shootRecord);
 
     await _databaseController.removeShootRecord(shootRecord);
-    await _databaseController.addShootRound(round);
+    await _databaseController.addShootRound(round, shootHistory!);
     await _databaseController.addShootHistory(shootHistory!);
   }
 
@@ -150,14 +151,14 @@ class ShootController extends GetxController {
     for (int i = 0; i < shootRound.shootCount; i++) {
       ShootRecord record = shootRound.relatedRecord.elementAt(i);
       record.hitTarget = mato.testHitTarget(record.hitPositionX * deductPosition, record.hitPositionY * deductPosition);
-      _databaseController.addShootRecord(record);
+      _databaseController.addShootRecord(record, shootRound);
       if (record.hitTarget) {
         shootHistory?.totalHitTarget++;
         shootRound.hitCount++;
       }
     }
 
-    _databaseController.addShootRound(shootRound);
+    _databaseController.addShootRound(shootRound, shootHistory!);
     _databaseController.addShootHistory(shootHistory!);
   }
 

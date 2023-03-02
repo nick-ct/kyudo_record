@@ -5,8 +5,7 @@ part 'shoot_record.g.dart';
 
 @Collection()
 class ShootRecord {
-  @Id()
-  int id = Isar.autoIncrement;
+  Id id = Isar.autoIncrement;
   late DateTime dateTime;
   late bool missed;
   late double hitPositionX;

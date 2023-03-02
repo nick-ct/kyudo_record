@@ -31,7 +31,7 @@ class ShootRecordSummaryData {
       return;
     }
     ImageProvider? provider =
-        AssetImage('assets/images/transparent' + _settingController.clusterSensitiveLevel.toStringAsFixed(0) + '.png');
+        AssetImage('assets/images/transparent${_settingController.clusterSensitiveLevel.toStringAsFixed(0)}.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
 
     HeatMapPage heatMapPage = HeatMapPage(

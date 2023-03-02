@@ -93,15 +93,9 @@ class _ShootRecordListState extends State<ShootRecordList> with TickerProviderSt
                         Expanded(
                           child: Column(
                             children: [
-                              Text('Round ' + (index + 1).toString()),
-                              Text('Hit Rate ' +
-                                  (_shootController.shootRounds[index].shootCount > 0
-                                      ? ((_shootController.shootRounds[index].hitCount /
-                                                  _shootController.shootRounds[index].shootCount *
-                                                  100)
-                                              .toStringAsFixed(0) +
-                                          '%')
-                                      : '---')),
+                              Text('Round ${index + 1}'),
+                              Text(
+                                  'Hit Rate ${_shootController.shootRounds[index].shootCount > 0 ? ('${(_shootController.shootRounds[index].hitCount / _shootController.shootRounds[index].shootCount * 100).toStringAsFixed(0)}%') : '---'}'),
                               const SizedBox(height: 4),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

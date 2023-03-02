@@ -7,7 +7,7 @@ class Framework extends StatefulWidget {
   final Widget body;
   const Framework({Key? key, required this.appbar, required this.body}) : super(key: key);
   @override
-  _FrameworkState createState() => _FrameworkState();
+  State<Framework> createState() => _FrameworkState();
 }
 
 class _FrameworkState extends State<Framework> {

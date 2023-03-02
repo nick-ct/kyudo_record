@@ -293,9 +293,8 @@ class _CalendarPageState extends State<CalendarPage> {
                                             const Text('Total Hit Count'),
                                             totalShoot == 0
                                                 ? const Text('0 / 0 (0.0 %)')
-                                                : Text('$totalHit / $totalShoot (' +
-                                                    (totalHit / totalShoot * 100).toStringAsFixed(1) +
-                                                    ' %)'),
+                                                : Text(
+                                                    '$totalHit / $totalShoot (${(totalHit / totalShoot * 100).toStringAsFixed(1)} %)'),
                                           ],
                                         ),
                                         Row(
@@ -305,16 +304,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                             summaryData[_selectedMatoSize.value].firstShoot.isEmpty
                                                 ? const Text('0 / 0 (0.0 %)')
                                                 : Text(
-                                                    '${summaryData[_selectedMatoSize.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].firstShoot.length} (' +
-                                                        (summaryData[_selectedMatoSize.value]
-                                                                    .firstShoot
-                                                                    .where((element) => element.hitTarget)
-                                                                    .toList()
-                                                                    .length /
-                                                                summaryData[_selectedMatoSize.value].firstShoot.length *
-                                                                100)
-                                                            .toStringAsFixed(1) +
-                                                        ' %)'),
+                                                    '${summaryData[_selectedMatoSize.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].firstShoot.length} (${(summaryData[_selectedMatoSize.value].firstShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedMatoSize.value].firstShoot.length * 100).toStringAsFixed(1)} %)'),
                                           ],
                                         ),
                                         Row(
@@ -324,18 +314,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                             summaryData[_selectedMatoSize.value].secondShoot.isEmpty
                                                 ? const Text('0 / 0 (0.0 %)')
                                                 : Text(
-                                                    '${summaryData[_selectedMatoSize.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].secondShoot.length} (' +
-                                                        (summaryData[_selectedMatoSize.value]
-                                                                    .secondShoot
-                                                                    .where((element) => element.hitTarget)
-                                                                    .toList()
-                                                                    .length /
-                                                                summaryData[_selectedMatoSize.value]
-                                                                    .secondShoot
-                                                                    .length *
-                                                                100)
-                                                            .toStringAsFixed(1) +
-                                                        ' %)'),
+                                                    '${summaryData[_selectedMatoSize.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].secondShoot.length} (${(summaryData[_selectedMatoSize.value].secondShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedMatoSize.value].secondShoot.length * 100).toStringAsFixed(1)} %)'),
                                           ],
                                         ),
                                         Row(
@@ -345,16 +324,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                             summaryData[_selectedMatoSize.value].thirdShoot.isEmpty
                                                 ? const Text('0 / 0 (0.0 %)')
                                                 : Text(
-                                                    '${summaryData[_selectedMatoSize.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].thirdShoot.length} (' +
-                                                        (summaryData[_selectedMatoSize.value]
-                                                                    .thirdShoot
-                                                                    .where((element) => element.hitTarget)
-                                                                    .toList()
-                                                                    .length /
-                                                                summaryData[_selectedMatoSize.value].thirdShoot.length *
-                                                                100)
-                                                            .toStringAsFixed(1) +
-                                                        ' %)'),
+                                                    '${summaryData[_selectedMatoSize.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].thirdShoot.length} (${(summaryData[_selectedMatoSize.value].thirdShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedMatoSize.value].thirdShoot.length * 100).toStringAsFixed(1)} %)'),
                                           ],
                                         ),
                                         Row(
@@ -364,18 +334,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                             summaryData[_selectedMatoSize.value].fourthShoot.isEmpty
                                                 ? const Text('0 / 0 (0.0 %)')
                                                 : Text(
-                                                    '${summaryData[_selectedMatoSize.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].fourthShoot.length} (' +
-                                                        (summaryData[_selectedMatoSize.value]
-                                                                    .fourthShoot
-                                                                    .where((element) => element.hitTarget)
-                                                                    .toList()
-                                                                    .length /
-                                                                summaryData[_selectedMatoSize.value]
-                                                                    .fourthShoot
-                                                                    .length *
-                                                                100)
-                                                            .toStringAsFixed(1) +
-                                                        ' %)'),
+                                                    '${summaryData[_selectedMatoSize.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedMatoSize.value].fourthShoot.length} (${(summaryData[_selectedMatoSize.value].fourthShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedMatoSize.value].fourthShoot.length * 100).toStringAsFixed(1)} %)'),
                                           ],
                                         ),
                                         Row(
@@ -461,10 +420,10 @@ class _CalendarPageState extends State<CalendarPage> {
               icon: Icon(Icons.summarize),
               label: 'Summary',
             ),
-            // NavigationDestination(
-            //   icon: Icon(Icons.calendar_today),
-            //   label: 'Schedule',
-            // ),
+            NavigationDestination(
+              icon: Icon(Icons.calendar_today),
+              label: 'Timeline',
+            ),
           ],
         ),
       ),

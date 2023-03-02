@@ -10,7 +10,7 @@ import 'package:lottie/lottie.dart';
 class ShootRecordSummary extends StatefulWidget {
   const ShootRecordSummary({Key? key}) : super(key: key);
   @override
-  _ShootRecordSummaryState createState() => _ShootRecordSummaryState();
+  State<ShootRecordSummary> createState() => _ShootRecordSummaryState();
 }
 
 class _ShootRecordSummaryState extends State<ShootRecordSummary> {
@@ -162,12 +162,7 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                                 children: [
                                   const Text('Total Hit Count'),
                                   Text(
-                                      '${_shootController.shootHistory?.totalHitTarget} / ${_shootController.shootHistory?.totalShoot} (' +
-                                          (_shootController.shootHistory!.totalHitTarget /
-                                                  _shootController.shootHistory!.totalShoot *
-                                                  100)
-                                              .toStringAsFixed(1) +
-                                          ' %)'),
+                                      '${_shootController.shootHistory?.totalHitTarget} / ${_shootController.shootHistory?.totalShoot} (${(_shootController.shootHistory!.totalHitTarget / _shootController.shootHistory!.totalShoot * 100).toStringAsFixed(1)} %)'),
                                 ],
                               ),
                               Row(
@@ -177,16 +172,7 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                                   summaryData[_selectedIndex.value].firstShoot.isEmpty
                                       ? const Text('0 / 0 (0.0 %)')
                                       : Text(
-                                          '${summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].firstShoot.length} (' +
-                                              (summaryData[_selectedIndex.value]
-                                                          .firstShoot
-                                                          .where((element) => element.hitTarget)
-                                                          .toList()
-                                                          .length /
-                                                      summaryData[_selectedIndex.value].firstShoot.length *
-                                                      100)
-                                                  .toStringAsFixed(1) +
-                                              ' %)'),
+                                          '${summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].firstShoot.length} (${(summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].firstShoot.length * 100).toStringAsFixed(1)} %)'),
                                 ],
                               ),
                               Row(
@@ -196,16 +182,7 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                                   summaryData[_selectedIndex.value].secondShoot.isEmpty
                                       ? const Text('0 / 0 (0.0 %)')
                                       : Text(
-                                          '${summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].secondShoot.length} (' +
-                                              (summaryData[_selectedIndex.value]
-                                                          .secondShoot
-                                                          .where((element) => element.hitTarget)
-                                                          .toList()
-                                                          .length /
-                                                      summaryData[_selectedIndex.value].secondShoot.length *
-                                                      100)
-                                                  .toStringAsFixed(1) +
-                                              ' %)'),
+                                          '${summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].secondShoot.length} (${(summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].secondShoot.length * 100).toStringAsFixed(1)} %)'),
                                 ],
                               ),
                               Row(
@@ -215,16 +192,7 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                                   summaryData[_selectedIndex.value].thirdShoot.isEmpty
                                       ? const Text('0 / 0 (0.0 %)')
                                       : Text(
-                                          '${summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].thirdShoot.length} (' +
-                                              (summaryData[_selectedIndex.value]
-                                                          .thirdShoot
-                                                          .where((element) => element.hitTarget)
-                                                          .toList()
-                                                          .length /
-                                                      summaryData[_selectedIndex.value].thirdShoot.length *
-                                                      100)
-                                                  .toStringAsFixed(1) +
-                                              ' %)'),
+                                          '${summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].thirdShoot.length} (${(summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].thirdShoot.length * 100).toStringAsFixed(1)} %)'),
                                 ],
                               ),
                               Row(
@@ -234,16 +202,7 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                                   summaryData[_selectedIndex.value].fourthShoot.isEmpty
                                       ? const Text('0 / 0 (0.0 %)')
                                       : Text(
-                                          '${summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].fourthShoot.length} (' +
-                                              (summaryData[_selectedIndex.value]
-                                                          .fourthShoot
-                                                          .where((element) => element.hitTarget)
-                                                          .toList()
-                                                          .length /
-                                                      summaryData[_selectedIndex.value].fourthShoot.length *
-                                                      100)
-                                                  .toStringAsFixed(1) +
-                                              ' %)'),
+                                          '${summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].fourthShoot.length} (${(summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].fourthShoot.length * 100).toStringAsFixed(1)} %)'),
                                 ],
                               ),
                               Row(

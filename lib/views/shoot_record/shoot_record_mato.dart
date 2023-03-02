@@ -121,7 +121,7 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
       return;
     }
     ImageProvider? provider =
-        AssetImage('assets/images/transparent' + _settingController.clusterSensitiveLevel.toStringAsFixed(0) + '.png');
+        AssetImage('assets/images/transparent${_settingController.clusterSensitiveLevel.toStringAsFixed(0)}.png');
     ui.Image? image = await HeatMap.imageProviderToUiImage(provider);
 
     HeatMapPage heatMapPage = HeatMapPage(
@@ -444,16 +444,10 @@ class _ShootRecordMatoState extends State<ShootRecordMato> with TickerProviderSt
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                           children: [
-                                            Text('Round ' + (index + 1).toString()),
+                                            Text('Round ${index + 1}'),
                                             const Text('28M'),
-                                            Text('Hit Rate ' +
-                                                (_shootController.shootRounds[index].shootCount > 0
-                                                    ? ((_shootController.shootRounds[index].hitCount /
-                                                                _shootController.shootRounds[index].shootCount *
-                                                                100)
-                                                            .toStringAsFixed(0) +
-                                                        '%')
-                                                    : '---'))
+                                            Text(
+                                                'Hit Rate ${_shootController.shootRounds[index].shootCount > 0 ? ('${(_shootController.shootRounds[index].hitCount / _shootController.shootRounds[index].shootCount * 100).toStringAsFixed(0)}%') : '---'}')
                                           ],
                                         ),
                                         const SizedBox(height: 4),

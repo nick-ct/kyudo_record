@@ -6,106 +6,103 @@ part of 'shoot_history.dart';
 // IsarCollectionGenerator
 // **************************************************************************
 
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, unused_local_variable
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters
 
 extension GetShootHistoryCollection on Isar {
-  IsarCollection<ShootHistory> get shootHistorys => getCollection();
+  IsarCollection<ShootHistory> get shootHistorys => this.collection();
 }
 
 const ShootHistorySchema = CollectionSchema(
-  name: 'ShootHistory',
-  schema:
-      '{"name":"ShootHistory","idName":"id","properties":[{"name":"date","type":"String"},{"name":"totalHitTarget","type":"Long"},{"name":"totalRound","type":"Long"},{"name":"totalShoot","type":"Long"}],"indexes":[],"links":[{"name":"relatedRound","target":"ShootRound"}]}',
-  idName: 'id',
-  propertyIds: {
-    'date': 0,
-    'totalHitTarget': 1,
-    'totalRound': 2,
-    'totalShoot': 3
+  name: r'ShootHistory',
+  id: 4745019105067358334,
+  properties: {
+    r'date': PropertySchema(
+      id: 0,
+      name: r'date',
+      type: IsarType.string,
+    ),
+    r'totalHitTarget': PropertySchema(
+      id: 1,
+      name: r'totalHitTarget',
+      type: IsarType.long,
+    ),
+    r'totalRound': PropertySchema(
+      id: 2,
+      name: r'totalRound',
+      type: IsarType.long,
+    ),
+    r'totalShoot': PropertySchema(
+      id: 3,
+      name: r'totalShoot',
+      type: IsarType.long,
+    )
   },
-  listProperties: {},
-  indexIds: {},
-  indexValueTypes: {},
-  linkIds: {'relatedRound': 0},
-  backlinkLinkNames: {},
+  estimateSize: _shootHistoryEstimateSize,
+  serialize: _shootHistorySerialize,
+  deserialize: _shootHistoryDeserialize,
+  deserializeProp: _shootHistoryDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {
+    r'relatedRound': LinkSchema(
+      id: -1948768005780295849,
+      name: r'relatedRound',
+      target: r'ShootRound',
+      single: false,
+    )
+  },
+  embeddedSchemas: {},
   getId: _shootHistoryGetId,
-  setId: _shootHistorySetId,
   getLinks: _shootHistoryGetLinks,
-  attachLinks: _shootHistoryAttachLinks,
-  serializeNative: _shootHistorySerializeNative,
-  deserializeNative: _shootHistoryDeserializeNative,
-  deserializePropNative: _shootHistoryDeserializePropNative,
-  serializeWeb: _shootHistorySerializeWeb,
-  deserializeWeb: _shootHistoryDeserializeWeb,
-  deserializePropWeb: _shootHistoryDeserializePropWeb,
-  version: 3,
+  attach: _shootHistoryAttach,
+  version: '3.0.5',
 );
 
-int? _shootHistoryGetId(ShootHistory object) {
-  if (object.id == Isar.autoIncrement) {
-    return null;
-  } else {
-    return object.id;
-  }
+int _shootHistoryEstimateSize(
+  ShootHistory object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  bytesCount += 3 + object.date.length * 3;
+  return bytesCount;
 }
 
-void _shootHistorySetId(ShootHistory object, int id) {
-  object.id = id;
+void _shootHistorySerialize(
+  ShootHistory object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.date);
+  writer.writeLong(offsets[1], object.totalHitTarget);
+  writer.writeLong(offsets[2], object.totalRound);
+  writer.writeLong(offsets[3], object.totalShoot);
 }
 
-List<IsarLinkBase> _shootHistoryGetLinks(ShootHistory object) {
-  return [object.relatedRound];
-}
-
-void _shootHistorySerializeNative(
-    IsarCollection<ShootHistory> collection,
-    IsarRawObject rawObj,
-    ShootHistory object,
-    int staticSize,
-    List<int> offsets,
-    AdapterAlloc alloc) {
-  var dynamicSize = 0;
-  final value0 = object.date;
-  final _date = IsarBinaryWriter.utf8Encoder.convert(value0);
-  dynamicSize += (_date.length) as int;
-  final value1 = object.totalHitTarget;
-  final _totalHitTarget = value1;
-  final value2 = object.totalRound;
-  final _totalRound = value2;
-  final value3 = object.totalShoot;
-  final _totalShoot = value3;
-  final size = staticSize + dynamicSize;
-
-  rawObj.buffer = alloc(size);
-  rawObj.buffer_length = size;
-  final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
-  final writer = IsarBinaryWriter(buffer, staticSize);
-  writer.writeBytes(offsets[0], _date);
-  writer.writeLong(offsets[1], _totalHitTarget);
-  writer.writeLong(offsets[2], _totalRound);
-  writer.writeLong(offsets[3], _totalShoot);
-}
-
-ShootHistory _shootHistoryDeserializeNative(
-    IsarCollection<ShootHistory> collection,
-    int id,
-    IsarBinaryReader reader,
-    List<int> offsets) {
+ShootHistory _shootHistoryDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
   final object = ShootHistory();
   object.date = reader.readString(offsets[0]);
   object.id = id;
   object.totalHitTarget = reader.readLong(offsets[1]);
   object.totalRound = reader.readLong(offsets[2]);
   object.totalShoot = reader.readLong(offsets[3]);
-  _shootHistoryAttachLinks(collection, id, object);
   return object;
 }
 
-P _shootHistoryDeserializePropNative<P>(
-    int id, IsarBinaryReader reader, int propertyIndex, int offset) {
-  switch (propertyIndex) {
-    case -1:
-      return id as P;
+P _shootHistoryDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
@@ -115,125 +112,101 @@ P _shootHistoryDeserializePropNative<P>(
     case 3:
       return (reader.readLong(offset)) as P;
     default:
-      throw 'Illegal propertyIndex';
+      throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-dynamic _shootHistorySerializeWeb(
-    IsarCollection<ShootHistory> collection, ShootHistory object) {
-  final jsObj = IsarNative.newJsObject();
-  IsarNative.jsObjectSet(jsObj, 'date', object.date);
-  IsarNative.jsObjectSet(jsObj, 'id', object.id);
-  IsarNative.jsObjectSet(jsObj, 'totalHitTarget', object.totalHitTarget);
-  IsarNative.jsObjectSet(jsObj, 'totalRound', object.totalRound);
-  IsarNative.jsObjectSet(jsObj, 'totalShoot', object.totalShoot);
-  return jsObj;
+Id _shootHistoryGetId(ShootHistory object) {
+  return object.id;
 }
 
-ShootHistory _shootHistoryDeserializeWeb(
-    IsarCollection<ShootHistory> collection, dynamic jsObj) {
-  final object = ShootHistory();
-  object.date = IsarNative.jsObjectGet(jsObj, 'date') ?? '';
-  object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-  object.totalHitTarget = IsarNative.jsObjectGet(jsObj, 'totalHitTarget') ??
-      double.negativeInfinity;
-  object.totalRound =
-      IsarNative.jsObjectGet(jsObj, 'totalRound') ?? double.negativeInfinity;
-  object.totalShoot =
-      IsarNative.jsObjectGet(jsObj, 'totalShoot') ?? double.negativeInfinity;
-  _shootHistoryAttachLinks(collection,
-      IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
-  return object;
+List<IsarLinkBase<dynamic>> _shootHistoryGetLinks(ShootHistory object) {
+  return [object.relatedRound];
 }
 
-P _shootHistoryDeserializePropWeb<P>(Object jsObj, String propertyName) {
-  switch (propertyName) {
-    case 'date':
-      return (IsarNative.jsObjectGet(jsObj, 'date') ?? '') as P;
-    case 'id':
-      return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
-          as P;
-    case 'totalHitTarget':
-      return (IsarNative.jsObjectGet(jsObj, 'totalHitTarget') ??
-          double.negativeInfinity) as P;
-    case 'totalRound':
-      return (IsarNative.jsObjectGet(jsObj, 'totalRound') ??
-          double.negativeInfinity) as P;
-    case 'totalShoot':
-      return (IsarNative.jsObjectGet(jsObj, 'totalShoot') ??
-          double.negativeInfinity) as P;
-    default:
-      throw 'Illegal propertyName';
-  }
-}
-
-void _shootHistoryAttachLinks(IsarCollection col, int id, ShootHistory object) {
-  object.relatedRound.attach(col, col.isar.shootRounds, 'relatedRound', id);
+void _shootHistoryAttach(
+    IsarCollection<dynamic> col, Id id, ShootHistory object) {
+  object.id = id;
+  object.relatedRound
+      .attach(col, col.isar.collection<ShootRound>(), r'relatedRound', id);
 }
 
 extension ShootHistoryQueryWhereSort
     on QueryBuilder<ShootHistory, ShootHistory, QWhere> {
   QueryBuilder<ShootHistory, ShootHistory, QAfterWhere> anyId() {
-    return addWhereClauseInternal(const IdWhereClause.any());
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
   }
 }
 
 extension ShootHistoryQueryWhere
     on QueryBuilder<ShootHistory, ShootHistory, QWhereClause> {
-  QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idEqualTo(
-      int id) {
-    return addWhereClauseInternal(IdWhereClause.between(
-      lower: id,
-      includeLower: true,
-      upper: id,
-      includeUpper: true,
-    ));
+  QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idNotEqualTo(
-      int id) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(
-        IdWhereClause.lessThan(upper: id, includeUpper: false),
-      ).addWhereClauseInternal(
-        IdWhereClause.greaterThan(lower: id, includeLower: false),
-      );
-    } else {
-      return addWhereClauseInternal(
-        IdWhereClause.greaterThan(lower: id, includeLower: false),
-      ).addWhereClauseInternal(
-        IdWhereClause.lessThan(upper: id, includeUpper: false),
-      );
-    }
+      Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idGreaterThan(
-      int id,
+      Id id,
       {bool include = false}) {
-    return addWhereClauseInternal(
-      IdWhereClause.greaterThan(lower: id, includeLower: include),
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
   }
 
-  QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idLessThan(int id,
+  QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
-    return addWhereClauseInternal(
-      IdWhereClause.lessThan(upper: id, includeUpper: include),
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterWhereClause> idBetween(
-    int lowerId,
-    int upperId, {
+    Id lowerId,
+    Id upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addWhereClauseInternal(IdWhereClause.between(
-      lower: lowerId,
-      includeLower: includeLower,
-      upper: upperId,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 }
 
@@ -243,58 +216,63 @@ extension ShootHistoryQueryFilter
     String value, {
     bool caseSensitive = true,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
       dateGreaterThan(
     String value, {
-    bool caseSensitive = true,
     bool include = false,
+    bool caseSensitive = true,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> dateLessThan(
     String value, {
-    bool caseSensitive = true,
     bool include = false,
+    bool caseSensitive = true,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> dateBetween(
     String lower,
     String upper, {
-    bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'date',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'date',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -302,103 +280,133 @@ extension ShootHistoryQueryFilter
     String value, {
     bool caseSensitive = true,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> dateEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> dateContains(
       String value,
       {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'date',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'date',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> dateMatches(
       String pattern,
       {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'date',
-      value: pattern,
-      caseSensitive: caseSensitive,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'date',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      dateIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'date',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      dateIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'date',
+        value: '',
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> idEqualTo(
-      int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'id',
-      value: value,
-    ));
+      Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> idGreaterThan(
-    int value, {
+    Id value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> idLessThan(
-    int value, {
+    Id value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> idBetween(
-    int lower,
-    int upper, {
+    Id lower,
+    Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'id',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
       totalHitTargetEqualTo(int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'totalHitTarget',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalHitTarget',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -406,12 +414,13 @@ extension ShootHistoryQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'totalHitTarget',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalHitTarget',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -419,12 +428,13 @@ extension ShootHistoryQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'totalHitTarget',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalHitTarget',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -434,22 +444,25 @@ extension ShootHistoryQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'totalHitTarget',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalHitTarget',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
       totalRoundEqualTo(int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'totalRound',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalRound',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -457,12 +470,13 @@ extension ShootHistoryQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'totalRound',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalRound',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -470,12 +484,13 @@ extension ShootHistoryQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'totalRound',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalRound',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -485,22 +500,25 @@ extension ShootHistoryQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'totalRound',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalRound',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
       totalShootEqualTo(int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'totalShoot',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalShoot',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -508,12 +526,13 @@ extension ShootHistoryQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'totalShoot',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalShoot',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -521,12 +540,13 @@ extension ShootHistoryQueryFilter
     int value, {
     bool include = false,
   }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'totalShoot',
-      value: value,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalShoot',
+        value: value,
+      ));
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
@@ -536,119 +556,204 @@ extension ShootHistoryQueryFilter
     bool includeLower = true,
     bool includeUpper = true,
   }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'totalShoot',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalShoot',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
   }
 }
+
+extension ShootHistoryQueryObject
+    on QueryBuilder<ShootHistory, ShootHistory, QFilterCondition> {}
 
 extension ShootHistoryQueryLinks
     on QueryBuilder<ShootHistory, ShootHistory, QFilterCondition> {
   QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition> relatedRound(
       FilterQuery<ShootRound> q) {
-    return linkInternal(
-      isar.shootRounds,
-      q,
-      'relatedRound',
-    );
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'relatedRound');
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      relatedRoundLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRound', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      relatedRoundIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRound', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      relatedRoundIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRound', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      relatedRoundLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRound', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      relatedRoundLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'relatedRound', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<ShootHistory, ShootHistory, QAfterFilterCondition>
+      relatedRoundLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'relatedRound', lower, includeLower, upper, includeUpper);
+    });
   }
 }
 
-extension ShootHistoryQueryWhereSortBy
+extension ShootHistoryQuerySortBy
     on QueryBuilder<ShootHistory, ShootHistory, QSortBy> {
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> sortByDate() {
-    return addSortByInternal('date', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> sortByDateDesc() {
-    return addSortByInternal('date', Sort.desc);
-  }
-
-  QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> sortById() {
-    return addSortByInternal('id', Sort.asc);
-  }
-
-  QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> sortByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       sortByTotalHitTarget() {
-    return addSortByInternal('totalHitTarget', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalHitTarget', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       sortByTotalHitTargetDesc() {
-    return addSortByInternal('totalHitTarget', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalHitTarget', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> sortByTotalRound() {
-    return addSortByInternal('totalRound', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalRound', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       sortByTotalRoundDesc() {
-    return addSortByInternal('totalRound', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalRound', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> sortByTotalShoot() {
-    return addSortByInternal('totalShoot', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalShoot', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       sortByTotalShootDesc() {
-    return addSortByInternal('totalShoot', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalShoot', Sort.desc);
+    });
   }
 }
 
-extension ShootHistoryQueryWhereSortThenBy
+extension ShootHistoryQuerySortThenBy
     on QueryBuilder<ShootHistory, ShootHistory, QSortThenBy> {
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> thenByDate() {
-    return addSortByInternal('date', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> thenByDateDesc() {
-    return addSortByInternal('date', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'date', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> thenById() {
-    return addSortByInternal('id', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> thenByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       thenByTotalHitTarget() {
-    return addSortByInternal('totalHitTarget', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalHitTarget', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       thenByTotalHitTargetDesc() {
-    return addSortByInternal('totalHitTarget', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalHitTarget', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> thenByTotalRound() {
-    return addSortByInternal('totalRound', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalRound', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       thenByTotalRoundDesc() {
-    return addSortByInternal('totalRound', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalRound', Sort.desc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy> thenByTotalShoot() {
-    return addSortByInternal('totalShoot', Sort.asc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalShoot', Sort.asc);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QAfterSortBy>
       thenByTotalShootDesc() {
-    return addSortByInternal('totalShoot', Sort.desc);
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalShoot', Sort.desc);
+    });
   }
 }
 
@@ -656,46 +761,60 @@ extension ShootHistoryQueryWhereDistinct
     on QueryBuilder<ShootHistory, ShootHistory, QDistinct> {
   QueryBuilder<ShootHistory, ShootHistory, QDistinct> distinctByDate(
       {bool caseSensitive = true}) {
-    return addDistinctByInternal('date', caseSensitive: caseSensitive);
-  }
-
-  QueryBuilder<ShootHistory, ShootHistory, QDistinct> distinctById() {
-    return addDistinctByInternal('id');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'date', caseSensitive: caseSensitive);
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QDistinct>
       distinctByTotalHitTarget() {
-    return addDistinctByInternal('totalHitTarget');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'totalHitTarget');
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QDistinct> distinctByTotalRound() {
-    return addDistinctByInternal('totalRound');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'totalRound');
+    });
   }
 
   QueryBuilder<ShootHistory, ShootHistory, QDistinct> distinctByTotalShoot() {
-    return addDistinctByInternal('totalShoot');
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'totalShoot');
+    });
   }
 }
 
 extension ShootHistoryQueryProperty
     on QueryBuilder<ShootHistory, ShootHistory, QQueryProperty> {
-  QueryBuilder<ShootHistory, String, QQueryOperations> dateProperty() {
-    return addPropertyNameInternal('date');
+  QueryBuilder<ShootHistory, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
   }
 
-  QueryBuilder<ShootHistory, int, QQueryOperations> idProperty() {
-    return addPropertyNameInternal('id');
+  QueryBuilder<ShootHistory, String, QQueryOperations> dateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'date');
+    });
   }
 
   QueryBuilder<ShootHistory, int, QQueryOperations> totalHitTargetProperty() {
-    return addPropertyNameInternal('totalHitTarget');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'totalHitTarget');
+    });
   }
 
   QueryBuilder<ShootHistory, int, QQueryOperations> totalRoundProperty() {
-    return addPropertyNameInternal('totalRound');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'totalRound');
+    });
   }
 
   QueryBuilder<ShootHistory, int, QQueryOperations> totalShootProperty() {
-    return addPropertyNameInternal('totalShoot');
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'totalShoot');
+    });
   }
 }
