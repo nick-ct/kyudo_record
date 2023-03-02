@@ -89,188 +89,190 @@ class _ShootRecordSummaryState extends State<ShootRecordSummary> {
                     ],
                   ),
                 )
-              : Column(
-                  children: <Widget>[
-                    // Container(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   width: Get.width,
-                    //   child: Center(
-                    //     child: ToggleSwitch(
-                    //       minWidth: Get.width / labels.length,
-                    //       initialLabelIndex: 0,
-                    //       totalSwitches: labels.length,
-                    //       labels: labels,
-                    //       onToggle: (index) => _selectedIndex.value = index!,
-                    //     ),
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: paintArea,
-                      width: paintArea,
-                      child: Center(
-                        child: Obx(
-                          () => Stack(
-                            alignment: AlignmentDirectional.center,
-                            children: [
-                              //Mato Widget List
-                              summaryData[_selectedIndex.value].mato.drawMato(),
-                              //display record
-                              ...summaryData[_selectedIndex.value]
-                                  .displayRecords
-                                  .where((p0) => !p0.missed)
-                                  .map((record) => Positioned(
-                                        top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
-                                        left: record.hitPositionX * deductPosition + deductPosition - 12,
-                                        child: const SizedBox(
-                                          height: 24,
-                                          width: 24,
-                                          child: Center(
-                                            child: Icon(
-                                              Icons.close,
-                                              color: Colors.green,
+              : SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      // Container(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   width: Get.width,
+                      //   child: Center(
+                      //     child: ToggleSwitch(
+                      //       minWidth: Get.width / labels.length,
+                      //       initialLabelIndex: 0,
+                      //       totalSwitches: labels.length,
+                      //       labels: labels,
+                      //       onToggle: (index) => _selectedIndex.value = index!,
+                      //     ),
+                      //   ),
+                      // ),
+                      SizedBox(
+                        height: paintArea,
+                        width: paintArea,
+                        child: Center(
+                          child: Obx(
+                            () => Stack(
+                              alignment: AlignmentDirectional.center,
+                              children: [
+                                //Mato Widget List
+                                summaryData[_selectedIndex.value].mato.drawMato(),
+                                //display record
+                                ...summaryData[_selectedIndex.value]
+                                    .displayRecords
+                                    .where((p0) => !p0.missed)
+                                    .map((record) => Positioned(
+                                          top: record.hitPositionY * deductPosition * -1 + deductPosition - 12,
+                                          left: record.hitPositionX * deductPosition + deductPosition - 12,
+                                          child: const SizedBox(
+                                            height: 24,
+                                            width: 24,
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.close,
+                                                color: Colors.green,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              //display heatmap
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                child: Image.memory(
-                                  summaryData[_selectedIndex.value].heatmapBytes!,
-                                  width: paintArea,
-                                  height: paintArea,
-                                  fit: BoxFit.contain,
+                                        ))
+                                    .toList(),
+                                //display heatmap
+                                Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  child: Image.memory(
+                                    summaryData[_selectedIndex.value].heatmapBytes!,
+                                    width: paintArea,
+                                    height: paintArea,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const Divider(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      width: Get.width,
-                      child: Obx(
-                        () => SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('Total Hit Count'),
-                                  Text(
-                                      '${_shootController.shootHistory?.totalHitTarget} / ${_shootController.shootHistory?.totalShoot} (${(_shootController.shootHistory!.totalHitTarget / _shootController.shootHistory!.totalShoot * 100).toStringAsFixed(1)} %)'),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('Hit In 1st Shoot'),
-                                  summaryData[_selectedIndex.value].firstShoot.isEmpty
-                                      ? const Text('0 / 0 (0.0 %)')
-                                      : Text(
-                                          '${summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].firstShoot.length} (${(summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].firstShoot.length * 100).toStringAsFixed(1)} %)'),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('Hit In 2nd Shoot'),
-                                  summaryData[_selectedIndex.value].secondShoot.isEmpty
-                                      ? const Text('0 / 0 (0.0 %)')
-                                      : Text(
-                                          '${summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].secondShoot.length} (${(summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].secondShoot.length * 100).toStringAsFixed(1)} %)'),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('Hit In 3rd Shoot'),
-                                  summaryData[_selectedIndex.value].thirdShoot.isEmpty
-                                      ? const Text('0 / 0 (0.0 %)')
-                                      : Text(
-                                          '${summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].thirdShoot.length} (${(summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].thirdShoot.length * 100).toStringAsFixed(1)} %)'),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('Hit In 4th Shoot'),
-                                  summaryData[_selectedIndex.value].fourthShoot.isEmpty
-                                      ? const Text('0 / 0 (0.0 %)')
-                                      : Text(
-                                          '${summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].fourthShoot.length} (${(summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].fourthShoot.length * 100).toStringAsFixed(1)} %)'),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('All Miss Shoot Round'),
-                                  Text(summaryData[_selectedIndex.value]
-                                      .roundList
-                                      .where((element) => element.hitCount == 0)
-                                      .toList()
-                                      .length
-                                      .toString()),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('1 Hit Shoot Round'),
-                                  Text(summaryData[_selectedIndex.value]
-                                      .roundList
-                                      .where((element) => element.hitCount == 1)
-                                      .toList()
-                                      .length
-                                      .toString()),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('2 Hit Shoot Round'),
-                                  Text(summaryData[_selectedIndex.value]
-                                      .roundList
-                                      .where((element) => element.hitCount == 2)
-                                      .toList()
-                                      .length
-                                      .toString()),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('3 Hit Shoot Round'),
-                                  Text(summaryData[_selectedIndex.value]
-                                      .roundList
-                                      .where((element) => element.hitCount == 3)
-                                      .toList()
-                                      .length
-                                      .toString()),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('All Hit Shoot Round'),
-                                  Text(summaryData[_selectedIndex.value]
-                                      .roundList
-                                      .where((element) => element.hitCount == 4)
-                                      .toList()
-                                      .length
-                                      .toString()),
-                                ],
-                              ),
-                            ],
+                      const Divider(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        width: Get.width,
+                        child: Obx(
+                          () => SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Total Hit Count'),
+                                    Text(
+                                        '${_shootController.shootHistory?.totalHitTarget} / ${_shootController.shootHistory?.totalShoot} (${(_shootController.shootHistory!.totalHitTarget / _shootController.shootHistory!.totalShoot * 100).toStringAsFixed(1)} %)'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Hit In 1st Shoot'),
+                                    summaryData[_selectedIndex.value].firstShoot.isEmpty
+                                        ? const Text('0 / 0 (0.0 %)')
+                                        : Text(
+                                            '${summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].firstShoot.length} (${(summaryData[_selectedIndex.value].firstShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].firstShoot.length * 100).toStringAsFixed(1)} %)'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Hit In 2nd Shoot'),
+                                    summaryData[_selectedIndex.value].secondShoot.isEmpty
+                                        ? const Text('0 / 0 (0.0 %)')
+                                        : Text(
+                                            '${summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].secondShoot.length} (${(summaryData[_selectedIndex.value].secondShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].secondShoot.length * 100).toStringAsFixed(1)} %)'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Hit In 3rd Shoot'),
+                                    summaryData[_selectedIndex.value].thirdShoot.isEmpty
+                                        ? const Text('0 / 0 (0.0 %)')
+                                        : Text(
+                                            '${summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].thirdShoot.length} (${(summaryData[_selectedIndex.value].thirdShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].thirdShoot.length * 100).toStringAsFixed(1)} %)'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('Hit In 4th Shoot'),
+                                    summaryData[_selectedIndex.value].fourthShoot.isEmpty
+                                        ? const Text('0 / 0 (0.0 %)')
+                                        : Text(
+                                            '${summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length} / ${summaryData[_selectedIndex.value].fourthShoot.length} (${(summaryData[_selectedIndex.value].fourthShoot.where((element) => element.hitTarget).toList().length / summaryData[_selectedIndex.value].fourthShoot.length * 100).toStringAsFixed(1)} %)'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('All Miss Shoot Round'),
+                                    Text(summaryData[_selectedIndex.value]
+                                        .roundList
+                                        .where((element) => element.hitCount == 0)
+                                        .toList()
+                                        .length
+                                        .toString()),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('1 Hit Shoot Round'),
+                                    Text(summaryData[_selectedIndex.value]
+                                        .roundList
+                                        .where((element) => element.hitCount == 1)
+                                        .toList()
+                                        .length
+                                        .toString()),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('2 Hit Shoot Round'),
+                                    Text(summaryData[_selectedIndex.value]
+                                        .roundList
+                                        .where((element) => element.hitCount == 2)
+                                        .toList()
+                                        .length
+                                        .toString()),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('3 Hit Shoot Round'),
+                                    Text(summaryData[_selectedIndex.value]
+                                        .roundList
+                                        .where((element) => element.hitCount == 3)
+                                        .toList()
+                                        .length
+                                        .toString()),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text('All Hit Shoot Round'),
+                                    Text(summaryData[_selectedIndex.value]
+                                        .roundList
+                                        .where((element) => element.hitCount == 4)
+                                        .toList()
+                                        .length
+                                        .toString()),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
     );
   }

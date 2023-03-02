@@ -34,7 +34,7 @@ class App extends StatelessWidget {
             centerTitle: true,
             color: Colors.blue[350],
           )),
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       initialRoute: '/shootRecordPage',
       onGenerateRoute: (settings) {
         switch (settings.name) {
